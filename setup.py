@@ -25,6 +25,7 @@ setup(name='upfront.versioning',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'Plone',
       ],
       entry_points="""
       # -*- Entry points: -*-
