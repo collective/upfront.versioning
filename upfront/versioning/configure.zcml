@@ -21,4 +21,10 @@
         provides=".interfaces.IVersioner"
        /> 
 
+    <adapter
+      for="zope.annotation.interfaces.IAttributeAnnotatable"
+      provides=".interfaces.IVersionMetadata"
+      factory=".versioner.VersionMetadata"
+      />
+
 </configure>

@@ -1,20 +1,34 @@
 from zope.interface import Interface
+from zope.annotation.interfaces import IAnnotations
 
 class IVersioner(Interface):
-    """
-    Interface for utility which provides versioning methods
-    """
+    """Interface for utility which provides versioning methods"""
 
     def getWorkspace(context):
         """If the authenticated member does not have a workspace then create 
         one. Return the workspace.
         
-        A context is needed to be able to find the membership tool."""
+        A context is needed to be able to find the membership tool.
+        """
 
     def checkout(item):
         """Checkout item to authenticated member's workspace. Returns 
-        checked out item."""
+        checked out item.
+        """
 
     def checkin(item):
         """Checkin item from authenticated member's workspace to 
-        repository. Returns checked in item."""
+        repository. Returns checked in item.
+        """
+
+class IVersionMetadata(IAnnotations):
+    """Interface for adapter which manages version metadata on an object """
+
+    def initialize(item):
+        """Set values obtained from item"""
+
+    def token():
+        """Return an identifier that can be used to find the original item.
+        The word 'token' is used since UID is Archetypes specific and we want 
+        to be agnostic.
+        """

@@ -20,13 +20,20 @@ class TestCheckout(VersioningTestCase):
         self.login('member')
         _createHomeFolder(self.portal, 'member', take_ownership=0)
 
-    def test_checkout(self):
-        """Content is not yet in workspace. Check it out.
-        """
+    def test_fresh_checkout(self):
+        """Content is not yet in workspace. Check it out."""
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
         copy = utility.checkout(self.portal.repository.apple)
         self.failIf(copy not in workspace.objectValues())
+
+    def test_already_checkedout(self):
+        """Content is already checked out. Check it out again."""
+        utility = getUtility(IVersioner)
+        workspace = utility.getWorkspace(self.portal)
+        copy_one = utility.checkout(self.portal.repository.apple)
+        copy_two = utility.checkout(self.portal.repository.apple)
+        self.assertEquals(copy_one, copy_two)
 
 def test_suite():
     from unittest import TestSuite, makeSuite
