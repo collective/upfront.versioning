@@ -1,0 +1,13 @@
+README.txt
+setup.cfg
+setup.py
+upfront/__init__.py
+upfront.versioning.egg-info/PKG-INFO
+upfront.versioning.egg-info/SOURCES.txt
+upfront.versioning.egg-info/dependency_links.txt
+upfront.versioning.egg-info/entry_points.txt
+upfront.versioning.egg-info/namespace_packages.txt
+upfront.versioning.egg-info/not-zip-safe
+upfront.versioning.egg-info/requires.txt
+upfront.versioning.egg-info/top_level.txt
+upfront/versioning/__init__.py
