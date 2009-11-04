@@ -16,4 +16,9 @@
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
 
+    <utility
+        factory=".versioner.Versioner"
+        provides=".interfaces.IVersioner"
+       /> 
+
 </configure>
