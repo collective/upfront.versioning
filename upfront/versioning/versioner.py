@@ -22,7 +22,10 @@ class Versioner(object):
         return home.workspace
 
     def checkout(self, item):
-        pass
+        cp = item.aq_parent.manage_copyObjects([item.id])
+        workspace = self.getWorkspace(item)
+        workspace.manage_pasteObjects(cp)
+        return workspace._getOb(item.id)
 
     def checkin(self, item):
         pass

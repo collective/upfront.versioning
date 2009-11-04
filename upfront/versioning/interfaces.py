@@ -7,7 +7,9 @@ class IVersioner(Interface):
 
     def getWorkspace(context):
         """If the authenticated member does not have a workspace then create 
-        one. Return the workspace."""
+        one. Return the workspace.
+        
+        A context is needed to be able to find the membership tool."""
 
     def checkout(item):
         """Checkout item to authenticated member's workspace. Returns 
