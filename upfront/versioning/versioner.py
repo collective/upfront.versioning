@@ -4,6 +4,7 @@ from persistent.dict import PersistentDict
 
 from zope.interface import implements, alsoProvides
 from zope.component import adapts, getUtility
+from zope.event import notify
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.annotation.attribute import AttributeAnnotations
 
@@ -12,6 +13,8 @@ from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
 from interfaces import IVersioner, IVersionMetadata
+from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
+    BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
 ANNOT_KEY = 'IVersionMetadata'
 
@@ -38,10 +41,14 @@ class Versioner(object):
             if IVersionMetadata(ob).token == item.UID():
                 return ob
 
+        notify(BeforeObjectCheckoutEvent(item))
+
         # Copy the item
         cp = item.aq_parent.manage_copyObjects([item.id])
         workspace.manage_pasteObjects(cp)
         copy = workspace._getOb(item.id)
+
+        notify(AfterObjectCheckoutEvent(copy, item))
 
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
@@ -54,8 +61,12 @@ class Versioner(object):
         # allow multiple checkins in a single transaction
 
         # Fetch the original item
-        #token = IVersionMetadata(item).token
-        #original = getToolByName(item, 'reference_catalog').lookupObject(token)
+        original = None
+        token = IVersionMetadata(item).token
+        if token is not None:
+            original = getToolByName(item, 'reference_catalog').lookupObject(token)        
+
+        notify(BeforeObjectCheckinEvent(item))
 
         # Find the folder where these portal type versions are stored
         portal = getToolByName(item, 'portal_url').getPortalObject()
@@ -88,8 +99,11 @@ class Versioner(object):
         # Move our copy there
         cp = item.aq_parent.manage_cutObjects(ids=[item.id])
         folder.manage_pasteObjects(cp)
+        ret = folder._getOb(item.id)
 
-        return folder._getOb(item.id)
+        notify(AfterObjectCheckinEvent(ret, original))
+
+        return ret
 
 class VersionMetadata(AttributeAnnotations):
     """Manages version metadata on an object"""
@@ -104,12 +118,14 @@ class VersionMetadata(AttributeAnnotations):
             self[ANNOT_KEY] = PersistentDict()
 
     def initialize(self, item):
+        wf = getToolByName(item, 'portal_workflow')
         self[ANNOT_KEY].update(
             dict(
                 token=item.UID(),
+                review_state=wf.getInfoFor(item, 'review_state'),
             )
         )
 
     @property
     def token(self):
-        self[ANNOT_KEY]['token']        
+        self[ANNOT_KEY].get('token', None)

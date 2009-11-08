@@ -1,4 +1,5 @@
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
+from zope.component.interfaces import IObjectEvent
 from zope.annotation.interfaces import IAnnotations
 
 class IVersioner(Interface):
@@ -32,3 +33,18 @@ class IVersionMetadata(IAnnotations):
         The word 'token' is used since UID is Archetypes specific and we want 
         to be agnostic.
         """
+
+class IVersioningEvent(IObjectEvent):
+    """Base class for versioning events"""
+
+class IBeforeObjectCheckoutEvent(IVersioningEvent):
+    pass
+
+class IAfterObjectCheckoutEvent(IVersioningEvent):
+    original = Attribute(u"The object that was originally cloned to create the copy")
+
+class IBeforeObjectCheckinEvent(IVersioningEvent):
+    pass
+
+class IAfterObjectCheckinEvent(IVersioningEvent):
+    original = Attribute(u"The object that was originally cloned to create the copy")
