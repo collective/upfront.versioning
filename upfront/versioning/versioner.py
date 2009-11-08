@@ -1,12 +1,15 @@
+from string import zfill
+
 from persistent.dict import PersistentDict
 
 from zope.interface import implements, alsoProvides
-from zope.component import adapts
+from zope.component import adapts, getUtility
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.annotation.attribute import AttributeAnnotations
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from plone.i18n.normalizer.interfaces import IURLNormalizer
 
 from interfaces import IVersioner, IVersionMetadata
 
@@ -24,7 +27,7 @@ class Versioner(object):
         member = pms.getAuthenticatedMember()
         home = member.getHomeFolder()
         if 'workspace' not in home.objectIds():
-            _createObjectByType('Folder', home, 'workspace', title='Workspace')
+            home.invokeFactory('Folder', id='workspace', title='Workspace')
         return home.workspace
 
     def checkout(self, item):
@@ -46,7 +49,47 @@ class Versioner(object):
         return copy
 
     def checkin(self, item):
-        pass
+        # todo: use semaphore where appropriate
+        # todo: version folders are sparse like with SVN, but that does
+        # allow multiple checkins in a single transaction
+
+        # Fetch the original item
+        #token = IVersionMetadata(item).token
+        #original = getToolByName(item, 'reference_catalog').lookupObject(token)
+
+        # Find the folder where these portal type versions are stored
+        portal = getToolByName(item, 'portal_url').getPortalObject()
+        repository = portal.repository
+        pt_id = getUtility(IURLNormalizer).normalize(item.portal_type)
+        if pt_id not in repository.objectIds():
+            _createObjectByType(
+                'Large Plone Folder', repository, pt_id, title=item.portal_type
+            )
+        pt_folder = repository._getOb(pt_id)
+
+        # Find the latest version number
+        latest_version = 0
+        oids = [o for o in pt_folder.objectIds()]
+        oids.sort()
+        if oids:
+            try:
+                latest_version = int(oids[-1])
+            except ValueError:
+                raise RuntimeError, \
+                    "Expected an int-able string but found %s" % oids[-1]        
+        latest_version += 1
+
+        # Create a folder for the new version
+        version_id = zfill(latest_version, 8)
+        folder = _createObjectByType(
+                'Folder', pt_folder, version_id, title=version_id
+        )
+
+        # Move our copy there
+        cp = item.aq_parent.manage_cutObjects(ids=[item.id])
+        folder.manage_pasteObjects(cp)
+
+        return folder._getOb(item.id)
 
 class VersionMetadata(AttributeAnnotations):
     """Manages version metadata on an object"""
