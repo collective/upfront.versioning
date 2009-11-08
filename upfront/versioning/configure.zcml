@@ -27,4 +27,10 @@
       factory=".versioner.VersionMetadata"
       />
 
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+        .interfaces.IBeforeObjectCheckoutEvent"
+        handler=".eventhandlers.beforeATObjectCheckoutEvent"
+        /> 
+
 </configure>
