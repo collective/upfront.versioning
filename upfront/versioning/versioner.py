@@ -29,6 +29,8 @@ class Versioner(object):
             raise RuntimeError, "Anonymous users cannot have a workspace"
         member = pms.getAuthenticatedMember()
         home = member.getHomeFolder()
+        if home is None:
+            raise RuntimeError, "Members must have home folders for versioning to function properly"
         if 'workspace' not in home.objectIds():
             home.invokeFactory('Folder', id='workspace', title='Workspace')
         return home.workspace

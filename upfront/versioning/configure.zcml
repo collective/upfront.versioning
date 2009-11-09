@@ -33,4 +33,6 @@
         handler=".eventhandlers.beforeATObjectCheckoutEvent"
         /> 
 
+    <include package=".browser" />
+
 </configure>

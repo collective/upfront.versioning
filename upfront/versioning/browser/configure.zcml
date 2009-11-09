@@ -1,0 +1,17 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="upfront.versioning">
+
+    <!-- todo: permission must for an authenticated user -->
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-checkout"
+        class=".views.VersioningView"
+        attribute="checkout"
+        permission="zope2.View" 
+        />
+
+</configure>
