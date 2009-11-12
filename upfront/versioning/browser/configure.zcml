@@ -14,4 +14,12 @@
         permission="zope2.View" 
         />
 
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-checkin"
+        class=".views.VersioningView"
+        attribute="checkin"
+        permission="cmf.ModifyPortalContent" 
+        />
+
 </configure>

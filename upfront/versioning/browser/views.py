@@ -19,3 +19,12 @@ class VersioningView(BrowserView):
             msg, type='info'
         )
         self.request.response.redirect(obj.absolute_url())
+
+    def checkin(self):
+        utility = getUtility(IVersioner)
+        obj = utility.checkin(aq_inner(self.context))
+        msg = _("The item has been checked in")
+        getToolByName(self.context, 'plone_utils').addPortalMessage(
+            msg, type='info'
+        )
+        self.request.response.redirect(obj.absolute_url())
