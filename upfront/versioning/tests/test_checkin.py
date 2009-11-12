@@ -1,4 +1,5 @@
 import transaction, unittest
+from AccessControl.PermissionRole import rolesForPermissionOn
 from zope.component import getUtility
 
 from Products.CMFPlone.utils import _createObjectByType
@@ -12,8 +13,13 @@ class TestCheckin(VersioningTestCase):
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
 
+        self.document_fti = self.portal.portal_types.getTypeInfo('Document')
+
         # Create a few items
+        self.loginAsPortalOwner()
         apple = _createObjectByType('Document', self.portal.repository, 'apple')
+        self.document_fti._finishConstruction(apple)
+        self.portal.portal_workflow.doActionFor(apple, 'publish')
 
         # These tests must be run while logged in as a member since we 
         # need a workspace.
@@ -26,6 +32,7 @@ class TestCheckin(VersioningTestCase):
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
         working = _createObjectByType('Document', workspace, 'working')
+        self.document_fti._finishConstruction(working)
         # We need to commit here so that _p_jar isn't None and move
         # will work
         transaction.savepoint(optimistic=True)
@@ -39,7 +46,7 @@ class TestCheckin(VersioningTestCase):
 
         # Grandparent folder of checkedin must have id 'document'
         self.assertEquals(checkedin.aq_parent.aq_parent.id, 'document')
-
+        
     def test_second_checkin(self):
         """Content is already in repo, ie. there exists a 
         /repository/document/00000001."""

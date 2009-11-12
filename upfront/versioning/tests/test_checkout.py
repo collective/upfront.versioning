@@ -1,4 +1,5 @@
 import unittest
+from AccessControl.PermissionRole import rolesForPermissionOn
 from zope.component import getUtility
 
 from Products.CMFPlone.utils import _createObjectByType
@@ -12,8 +13,13 @@ class TestCheckout(VersioningTestCase):
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
 
+        self.document_fti = self.portal.portal_types.getTypeInfo('Document')
+
         # Create a few items
+        self.loginAsPortalOwner()
         apple = _createObjectByType('Document', self.portal.repository, 'apple')
+        self.document_fti._finishConstruction(apple)
+        self.portal.portal_workflow.doActionFor(apple, 'publish')
 
         # These tests must be run while logged in as a member since we 
         # need a workspace.
@@ -29,6 +35,11 @@ class TestCheckout(VersioningTestCase):
         self.failUnless(copy in workspace.objectValues())
         # Is interface provided
         self.failUnless(ICheckedOut.providedBy(copy))
+        # Only Manager and Owner may have View permission. No acquire.
+        roles = rolesForPermissionOn('View', copy)
+        self.assertEquals(len(roles), 2)
+        self.failUnless('Manager' in roles)
+        self.failUnless('Owner' in roles)
 
     def test_already_checkedout(self):
         """Content is already checked out. Check it out again."""

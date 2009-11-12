@@ -10,6 +10,7 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.annotation.attribute import AttributeAnnotations
 
 from Products.CMFCore.utils import getToolByName
+from Products.DCWorkflow.utils import modifyRolesForPermission
 from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
@@ -60,6 +61,7 @@ class Versioner(object):
         alsoProvides(copy, ICheckedOut)
 
         # Change View permission
+        modifyRolesForPermission(copy, 'View', ('Manager','Owner'))
 
         return copy
 
