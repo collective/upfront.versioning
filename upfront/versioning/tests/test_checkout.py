@@ -4,7 +4,7 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner
+from upfront.versioning.interfaces import IVersioner, ICheckedOut
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckout(VersioningTestCase):
@@ -25,7 +25,10 @@ class TestCheckout(VersioningTestCase):
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
         copy = utility.checkout(self.portal.repository.apple)
-        self.failIf(copy not in workspace.objectValues())
+        # Is it there?
+        self.failUnless(copy in workspace.objectValues())
+        # Is interface provided
+        self.failUnless(ICheckedOut.providedBy(copy))
 
     def test_already_checkedout(self):
         """Content is already checked out. Check it out again."""

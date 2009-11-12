@@ -1,6 +1,7 @@
 from string import zfill
 
 from persistent.dict import PersistentDict
+from Acquisition import aq_base
 
 from zope.interface import implements, alsoProvides, noLongerProvides
 from zope.component import adapts, getUtility
@@ -58,6 +59,8 @@ class Versioner(object):
         # Apply marker interface
         alsoProvides(copy, ICheckedOut)
 
+        # Change View permission
+
         return copy
 
     def checkin(self, item):
@@ -73,6 +76,15 @@ class Versioner(object):
 
         # Remove marker interface
         noLongerProvides(item, ICheckedOut)
+
+        # Restore View permission of item and children by using the workflow
+        # tool
+        wf = getToolByName(item, 'portal_workflow')
+        wfs = {}
+        for ob in wf.getWorkflowsFor(item):
+            if hasattr(aq_base(ob), 'updateRoleMappingsFor'):
+                wfs[ob.id] = ob
+        wf._recursiveUpdateRoleMappings(item, wfs)
 
         notify(BeforeObjectCheckinEvent(item))
 
