@@ -5,6 +5,22 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="upfront.versioning">
 
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-can-checkout"
+        class=".views.VersioningView"
+        attribute="can_checkout"
+        permission="zope2.View" 
+        />
+
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-can-checkin"
+        class=".views.VersioningView"
+        attribute="can_checkin"
+        permission="cmf.ModifyPortalContent" 
+        />
+
     <!-- todo: permission must for an authenticated user -->
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"

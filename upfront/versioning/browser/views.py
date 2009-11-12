@@ -4,12 +4,18 @@ from zope.component import getUtility
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
 
-from upfront.versioning.interfaces import IVersioner
+from upfront.versioning.interfaces import IVersioner, ICheckedOut
 from upfront.versioning import _
 
 class VersioningView(BrowserView):
     """
     """
+
+    def can_checkout(self):
+        return not ICheckedOut.providedBy(aq_inner(self.context))
+
+    def can_checkin(self):
+        return ICheckedOut.providedBy(aq_inner(self.context))
 
     def checkout(self):
         utility = getUtility(IVersioner)
@@ -27,4 +33,4 @@ class VersioningView(BrowserView):
         getToolByName(self.context, 'plone_utils').addPortalMessage(
             msg, type='info'
         )
-        self.request.response.redirect(obj.absolute_url())
+        self.request.response.redirect(obj.absolute_url())            

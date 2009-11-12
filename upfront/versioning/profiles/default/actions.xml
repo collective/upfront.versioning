@@ -9,7 +9,7 @@
    <property name="url_expr">string:$object_url/@@upfront.versioning-checkout</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">python:object is not None</property>
+      name="available_expr">python:object.restrictedTraverse('@@upfront.versioning-can-checkout')()</property>
    <property name="permissions">
     <element value="View"/>
    </property>
@@ -24,7 +24,7 @@
    <property name="url_expr">string:$object_url/@@upfront.versioning-checkin</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">python:object is not None</property>
+      name="available_expr">python:object.restrictedTraverse('@@upfront.versioning-can-checkin')()</property>
    <property name="permissions">
     <element value="View"/>
    </property>
