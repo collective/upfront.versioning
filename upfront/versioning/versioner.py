@@ -2,7 +2,7 @@ from string import zfill
 
 from persistent.dict import PersistentDict
 
-from zope.interface import implements, alsoProvides
+from zope.interface import implements, alsoProvides, noLongerProvides
 from zope.component import adapts, getUtility
 from zope.event import notify
 from zope.annotation.interfaces import IAttributeAnnotatable
@@ -12,7 +12,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
-from interfaces import IVersioner, IVersionMetadata
+from interfaces import IVersioner, IVersionMetadata, ICheckedOut
 from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
@@ -55,6 +55,9 @@ class Versioner(object):
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
 
+        # Apply marker interface
+        alsoProvides(copy, ICheckedOut)
+
         return copy
 
     def checkin(self, item):
@@ -67,6 +70,9 @@ class Versioner(object):
         token = IVersionMetadata(item).token
         if token is not None:
             original = getToolByName(item, 'reference_catalog').lookupObject(token)        
+
+        # Remove marker interface
+        noLongerProvides(item, ICheckedOut)
 
         notify(BeforeObjectCheckinEvent(item))
 

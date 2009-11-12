@@ -22,6 +22,9 @@ class IVersioner(Interface):
         repository. Returns checked in item.
         """
 
+class ICheckedOut(Interface):
+    """Marker interface applied to an object on checkout"""
+
 class IVersionMetadata(IAnnotations):
     """Interface for adapter which manages version metadata on an object """
 
