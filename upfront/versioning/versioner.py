@@ -49,8 +49,8 @@ class Versioner(object):
 
         # Copy the item
         cp = item.aq_parent.manage_copyObjects([item.id])
-        workspace.manage_pasteObjects(cp)
-        copy = workspace._getOb(item.id)
+        res = workspace.manage_pasteObjects(cp)
+        copy = workspace._getOb(res[0]['new_id'])
 
         notify(AfterObjectCheckoutEvent(copy, item))
 
@@ -120,12 +120,17 @@ class Versioner(object):
 
         # Move our copy there
         cp = item.aq_parent.manage_cutObjects(ids=[item.id])
-        folder.manage_pasteObjects(cp)
-        ret = folder._getOb(item.id)
+        res = folder.manage_pasteObjects(cp)
+        checkedin = folder._getOb(res[0]['new_id'])
 
-        notify(AfterObjectCheckinEvent(ret, original))
+        # If checked in item's id does not match that of original then rename
+        if (original is not None) and (checkedin.id != original.id):
+            # setId seems safe but if problems arise use manage_renameObject
+            checkedin.setId(original.id)
 
-        return ret
+        notify(AfterObjectCheckinEvent(checkedin, original))
+
+        return checkedin
 
 class VersionMetadata(AttributeAnnotations):
     """Manages version metadata on an object"""
@@ -150,4 +155,4 @@ class VersionMetadata(AttributeAnnotations):
 
     @property
     def token(self):
-        self[ANNOT_KEY].get('token', None)
+        return self[ANNOT_KEY].get('token', None)

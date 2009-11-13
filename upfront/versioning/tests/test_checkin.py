@@ -5,7 +5,7 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner
+from upfront.versioning.interfaces import IVersioner, ICheckedOut
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckin(VersioningTestCase):
@@ -46,7 +46,10 @@ class TestCheckin(VersioningTestCase):
 
         # Grandparent folder of checkedin must have id 'document'
         self.assertEquals(checkedin.aq_parent.aq_parent.id, 'document')
-        
+       
+        # Marker interface must be gone
+        self.failIf(ICheckedOut.providedBy(checkedin))
+
     def test_second_checkin(self):
         """Content is already in repo, ie. there exists a 
         /repository/document/00000001."""
@@ -67,14 +70,8 @@ class TestCheckin(VersioningTestCase):
         transaction.savepoint(optimistic=True)
         checkedin = utility.checkin(working)
 
-        # Working copy must be removed from workspace
-        self.failIf('working' in workspace.objectIds())
-
         # Parent folder of checkedin must have id 00000002
         self.assertEquals(checkedin.aq_parent.id, '00000002')
-
-        # Grandparent folder of checkedin must have id 'document'
-        self.assertEquals(checkedin.aq_parent.aq_parent.id, 'document')
 
 def test_suite():
     from unittest import TestSuite, makeSuite
