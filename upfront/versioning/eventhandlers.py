@@ -5,6 +5,7 @@ reader :)"""
 import logging
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFEditions.interfaces.IStorage import StoragePurgeError
 
 from upfront.versioning import _
 
@@ -34,3 +35,21 @@ def beforeATObjectCheckoutEvent(ob, event):
         logger = logging.getLogger('upfront.versioning')
         logger.warn(msg)
         getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
+
+def afterATObjectCheckoutEvent(ob, event):
+    """Remove comments and history"""   
+    tool = getToolByName(ob, 'portal_archivist')
+    try:
+        tool.purge(ob)
+    except StoragePurgeError:
+        pass
+
+'''
+def afterATObjectCheckinEvent(ob, original, event):
+    """Remove comments and history"""
+    tool = getToolByName(ob, 'portal_archivist')
+    try:
+        tool.purge(ob)
+    except StoragePurgeError:
+        pass
+'''        

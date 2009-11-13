@@ -33,6 +33,18 @@
         handler=".eventhandlers.beforeATObjectCheckoutEvent"
         /> 
 
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+        .interfaces.IAfterObjectCheckoutEvent"
+        handler=".eventhandlers.afterATObjectCheckoutEvent"
+        /> 
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+        .interfaces.IAfterObjectCheckinEvent"
+        handler=".eventhandlers.afterATObjectCheckinEvent"
+        /> 
+
     <include package=".browser" />
 
 </configure>
