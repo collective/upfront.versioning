@@ -26,6 +26,17 @@ class TestCheckout(VersioningTestCase):
         self.login('member')
         _createHomeFolder(self.portal, 'member', take_ownership=0)
 
+    def test_can_checkout(self):
+        """Can content be checked out?"""
+        utility = getUtility(IVersioner)
+
+        # Item has not been checked out
+        self.failUnless(utility.can_checkout(self.portal.repository.apple))
+
+        # Item has been checked out
+        copy = utility.checkout(self.portal.repository.apple)
+        self.failIf(utility.can_checkout(copy))
+
     def test_fresh_checkout(self):
         """Content is not yet in workspace. Check it out."""
         utility = getUtility(IVersioner)

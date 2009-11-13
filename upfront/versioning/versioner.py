@@ -37,6 +37,26 @@ class Versioner(object):
             home.invokeFactory('Folder', id='workspace', title='Workspace')
         return home.workspace
 
+    def can_checkout(self, item):
+        parent = item
+        while parent is not None:
+            if ICheckedOut.providedBy(parent):
+                return False
+            parent = getattr(parent, 'aq_parent', None)
+        return True
+
+    def can_checkin(self, item):
+        if not ICheckedOut.providedBy(item):
+            return False
+
+        parent = getattr(item, 'aq_parent', None)
+        while parent is not None:
+            if ICheckedOut.providedBy(parent):
+                return False
+            parent = getattr(parent, 'aq_parent', None)
+
+        return True
+      
     def checkout(self, item):
         # Scan the workspace for item. If it is already checked out then 
         # return it.
@@ -57,12 +77,11 @@ class Versioner(object):
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
 
-        # Apply marker interface
-        alsoProvides(copy, ICheckedOut)
-
         # Change View permission recursively
+        alsoProvides(copy, ICheckedOut)
         modifyRolesForPermission(copy, 'View', ('Manager','Owner'))
         for dontcare, child in copy.ZopeFind(copy, search_sub=1):
+            alsoProvides(child, ICheckedOut)
             modifyRolesForPermission(child, 'View', ('Manager','Owner'))
 
         return copy

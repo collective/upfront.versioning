@@ -13,10 +13,12 @@ class VersioningView(BrowserView):
     """
 
     def can_checkout(self):
-        return not ICheckedOut.providedBy(aq_inner(self.context))
+        utility = getUtility(IVersioner)
+        return utility.can_checkout(aq_inner(self.context))
 
     def can_checkin(self):
-        return ICheckedOut.providedBy(aq_inner(self.context))
+        utility = getUtility(IVersioner)
+        return utility.can_checkin(aq_inner(self.context))
 
     def checkout(self):
         utility = getUtility(IVersioner)

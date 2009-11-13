@@ -12,6 +12,14 @@ class IVersioner(Interface):
         A context is needed to be able to find the membership tool.
         """
 
+    def can_checkout(item):
+        """Return true if ICheckedOut interface is not provided by item or 
+        any parent, false otherwise."""
+
+    def can_checkin(item):
+        """Return true if ICheckedOut interface is provided by item and not 
+        by any parent, false otherwise."""
+
     def checkout(item):
         """Checkout item to authenticated member's workspace. Returns 
         checked out item.

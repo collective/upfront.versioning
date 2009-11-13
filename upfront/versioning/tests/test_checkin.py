@@ -26,6 +26,17 @@ class TestCheckin(VersioningTestCase):
         self.login('member')
         _createHomeFolder(self.portal, 'member', take_ownership=0)
 
+    def test_can_checkin(self):
+        """Can content be checked in?"""
+        utility = getUtility(IVersioner)
+
+        # Item has not been checked out
+        self.failIf(utility.can_checkin(self.portal.repository.apple))
+
+        # Item has been checked out
+        copy = utility.checkout(self.portal.repository.apple)
+        self.failUnless(utility.can_checkin(copy))
+
     def test_fresh_checkin(self):
         """Content is not yet in repo, ie. there exists no 
         /repository/document."""
