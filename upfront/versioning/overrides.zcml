@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="upfront.versioning">
+
+    <browser:menu
+        id="plone_contentmenu_workflow"
+        title="The 'workflow' menu - allows the user to execute workflow transitions"
+        class=".browser.views.WorkflowMenu"
+        /> 
+
+</configure>

@@ -3,6 +3,7 @@ from zope.component import getUtility
 
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
+from plone.app.contentmenu.menu import WorkflowMenu as BaseWorkflowMenu
 
 from upfront.versioning.interfaces import IVersioner, ICheckedOut
 from upfront.versioning import _
@@ -34,3 +35,12 @@ class VersioningView(BrowserView):
             msg, type='info'
         )
         self.request.response.redirect(obj.absolute_url())            
+
+class WorkflowMenu(BaseWorkflowMenu):
+    """Override to return an empty workflow menu for items that are
+    checked out."""
+
+    def getMenuItems(self, context, request):
+        if ICheckedOut.providedBy(context):
+            return []
+        return BaseWorkflowMenu.getMenuItems(self, context, request)    
