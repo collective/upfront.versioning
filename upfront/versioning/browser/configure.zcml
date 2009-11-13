@@ -6,7 +6,7 @@
     i18n_domain="upfront.versioning">
 
     <browser:page 
-        for="Products.Archetypes.interfaces.IBaseObject"
+        for="*"
         name="upfront.versioning-can-checkout"
         class=".views.VersioningView"
         attribute="can_checkout"
@@ -14,7 +14,7 @@
         />
 
     <browser:page 
-        for="Products.Archetypes.interfaces.IBaseObject"
+        for="*"
         name="upfront.versioning-can-checkin"
         class=".views.VersioningView"
         attribute="can_checkin"
