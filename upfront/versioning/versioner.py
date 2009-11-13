@@ -60,8 +60,10 @@ class Versioner(object):
         # Apply marker interface
         alsoProvides(copy, ICheckedOut)
 
-        # Change View permission
+        # Change View permission recursively
         modifyRolesForPermission(copy, 'View', ('Manager','Owner'))
+        for dontcare, child in copy.ZopeFind(copy, search_sub=1):
+            modifyRolesForPermission(child, 'View', ('Manager','Owner'))
 
         return copy
 
