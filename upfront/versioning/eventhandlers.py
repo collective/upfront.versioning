@@ -3,6 +3,7 @@ comments when an object is chacked out. It is left as an exercise to the
 reader :)"""
 
 import logging
+from Acquisition import aq_base
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions.interfaces.IStorage import StoragePurgeError
@@ -38,18 +39,17 @@ def beforeATObjectCheckoutEvent(ob, event):
 
 def afterATObjectCheckoutEvent(ob, event):
     """Remove comments and history"""   
-    tool = getToolByName(ob, 'portal_archivist')
-    try:
-        tool.purge(ob)
-    except StoragePurgeError:
-        pass
 
-'''
-def afterATObjectCheckinEvent(ob, original, event):
+    # Remove workflow history
+    unwrapped = aq_base(ob)
+    if hasattr(unwrapped, 'workflow_history'):
+        unwrapped.workflow_history = {}
+    
+def afterATObjectCheckinEvent(ob, event):
     """Remove comments and history"""
-    tool = getToolByName(ob, 'portal_archivist')
-    try:
-        tool.purge(ob)
-    except StoragePurgeError:
-        pass
-'''        
+ 
+    # Remove CMFEditions history    
+    tool = getToolByName(ob, 'portal_repository', None)
+    if tool is not None:
+        for h in tool.getHistory(ob):
+            tool.purge(ob, h.version_id)
