@@ -1,8 +1,9 @@
 """Default event handlers. A typical custom use case would be to delete 
-comments when an object is chacked out. It is left as an exercise to the 
+comments when an object is checked out. It is left as an exercise to the 
 reader :)"""
 
 import logging
+from DateTime import DateTime
 from Acquisition import aq_base
 
 from Products.CMFCore.utils import getToolByName
@@ -62,3 +63,17 @@ def afterATObjectCheckinEvent(ob, event):
     # Catalog checked in item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
     vc.catalog_object(ob)
+
+    # Expire all other versions of this item. Doing so prevents 
+    # portal_catalog from returning older versions unless it is 
+    # specifically instructed to do so.
+    portal = getToolByName(ob, 'portal_url').getPortalObject()
+    expires = DateTime() - 1/1440.0
+    for brain in vc.getVersionsOf(ob):
+        o = brain.getObject()
+        if o == ob:
+            # Skip over context
+            continue
+        if not portal.isExpired(o):
+            o.setExpirationDate(expires)
+            o.reindexObject()

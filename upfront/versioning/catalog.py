@@ -41,6 +41,8 @@ class VersioningCatalog(CatalogTool):
             self, IVersionMetadata(obj), uid, idxs, update_metadata, pghandler
         )
 
-    def getVersionsOf(self, token):
+    def getVersionsOf(self, obj):
         """Return all versions of object identified by token"""
-        return self(token=token)
+        if not (ICheckedOut.providedBy(obj) or ICheckedIn.providedBy(obj)):
+            return []
+        return self(token=IVersionMetadata(obj).token)
