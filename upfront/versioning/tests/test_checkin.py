@@ -5,7 +5,7 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckin(VersioningTestCase):
@@ -60,6 +60,19 @@ class TestCheckin(VersioningTestCase):
        
         # Marker interface must be gone
         self.failIf(ICheckedOut.providedBy(checkedin))
+
+        # But this marker interface must be set
+        self.failUnless(ICheckedIn.providedBy(checkedin))
+
+        # Is checked in item in catalog? Token is not passed as parameter 
+        # since this test is for a fresh checkin. This means there was no 
+        # matching checkout prior to the checkin.
+        vc = self.portal.upfront_versioning_catalog
+        brains = vc(
+            path='/'.join(checkedin.getPhysicalPath()),
+            state='checked_in'
+        )
+        self.failUnless(brains)
 
     def test_second_checkin(self):
         """Content is already in repo, ie. there exists a 

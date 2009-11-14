@@ -41,6 +41,12 @@
 
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
+        .interfaces.IBeforeObjectCheckinEvent"
+        handler=".eventhandlers.beforeATObjectCheckinEvent"
+        /> 
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
         .interfaces.IAfterObjectCheckinEvent"
         handler=".eventhandlers.afterATObjectCheckinEvent"
         /> 

@@ -5,7 +5,7 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckout(VersioningTestCase):
@@ -42,15 +42,30 @@ class TestCheckout(VersioningTestCase):
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
         copy = utility.checkout(self.portal.repository.apple)
+
         # Is it there?
         self.failUnless(copy in workspace.objectValues())
-        # Is interface provided
+
+        # Is interface provided?
         self.failUnless(ICheckedOut.providedBy(copy))
+
+        # Is interface not provided?
+        self.failIf(ICheckedIn.providedBy(copy))
+
         # Only Manager and Owner may have View permission. No acquire.
         roles = rolesForPermissionOn('View', copy)
         self.assertEquals(len(roles), 2)
         self.failUnless('Manager' in roles)
         self.failUnless('Owner' in roles)
+
+        # Is checked out item in catalog?
+        vc = self.portal.upfront_versioning_catalog
+        brains = vc(
+            path='/'.join(copy.getPhysicalPath()), 
+            token=self.portal.repository.apple.UID(),
+            state='checked_out'
+        )
+        self.failUnless(brains)      
 
     def test_already_checkedout(self):
         """Content is already checked out. Check it out again."""

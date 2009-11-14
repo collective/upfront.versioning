@@ -14,7 +14,9 @@ class IVersioner(Interface):
 
     def can_checkout(item):
         """Return true if ICheckedOut interface is not provided by item or 
-        any parent, false otherwise."""
+        any parent, false otherwise.
+        
+        todo: how to prevent attempt to checkout Plone site?"""
 
     def can_checkin(item):
         """Return true if ICheckedOut interface is provided by item and not 
@@ -33,17 +35,27 @@ class IVersioner(Interface):
 class ICheckedOut(Interface):
     """Marker interface applied to an object on checkout"""
 
+class ICheckedIn(Interface):
+    """Marker interface applied to an object on checkin"""
+
 class IVersionMetadata(IAnnotations):
     """Interface for adapter which manages version metadata on an object """
 
     def initialize(item):
         """Set values obtained from item"""
 
+    def getPhysicalPath(self):
+        """Compatibility method so adapted object can be catalogued"""
+
     def token():
         """Return an identifier that can be used to find the original item.
         The word 'token' is used since UID is Archetypes specific and we want 
         to be agnostic.
         """
+
+    def state():
+        """Return 'checked_out' if context implements ICheckedOut or return 
+        'checked_in' if context implements ICheckedIn."""
 
 class IVersioningEvent(IObjectEvent):
     """Base class for versioning events"""

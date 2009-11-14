@@ -38,18 +38,27 @@ def beforeATObjectCheckoutEvent(ob, event):
         getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
 
 def afterATObjectCheckoutEvent(ob, event):
-    """Remove comments and history"""   
-
     # Remove workflow history
     unwrapped = aq_base(ob)
     if hasattr(unwrapped, 'workflow_history'):
         unwrapped.workflow_history = {}
-    
+   
+    # Catalog checked out item
+    vc = getToolByName(ob, 'upfront_versioning_catalog')
+    vc.catalog_object(ob)
+
+def beforeATObjectCheckinEvent(ob, event):
+    # Uncatalog checked out item
+    vc = getToolByName(ob, 'upfront_versioning_catalog')
+    vc.uncatalog_object('/'.join(ob.getPhysicalPath()))
+
 def afterATObjectCheckinEvent(ob, event):
-    """Remove comments and history"""
- 
     # Remove CMFEditions history    
     tool = getToolByName(ob, 'portal_repository', None)
     if tool is not None:
         for h in tool.getHistory(ob):
             tool.purge(ob, h.version_id)
+
+    # Catalog checked in item
+    vc = getToolByName(ob, 'upfront_versioning_catalog')
+    vc.catalog_object(ob)

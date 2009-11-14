@@ -14,7 +14,7 @@ from Products.DCWorkflow.utils import modifyRolesForPermission
 from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
-from interfaces import IVersioner, IVersionMetadata, ICheckedOut
+from interfaces import IVersioner, IVersionMetadata, ICheckedOut, ICheckedIn
 from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
@@ -72,17 +72,18 @@ class Versioner(object):
         res = workspace.manage_pasteObjects(cp)
         copy = workspace._getOb(res[0]['new_id'])
 
-        notify(AfterObjectCheckoutEvent(copy, item))
-
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
 
-        # Change View permission recursively
+        # Change View permission and marker interfaces recursively
+        if ICheckedIn.providedBy(copy):
+            noLongerProvides(copy, ICheckedIn)
         alsoProvides(copy, ICheckedOut)
         modifyRolesForPermission(copy, 'View', ('Manager','Owner'))
         for dontcare, child in copy.ZopeFind(copy, search_sub=1):
-            alsoProvides(child, ICheckedOut)
             modifyRolesForPermission(child, 'View', ('Manager','Owner'))
+
+        notify(AfterObjectCheckoutEvent(copy, item))
 
         return copy
 
@@ -95,10 +96,13 @@ class Versioner(object):
         original = None
         token = IVersionMetadata(item).token
         if token is not None:
-            original = getToolByName(item, 'reference_catalog').lookupObject(token)        
+            original = getToolByName(item, 'reference_catalog').lookupObject(token)
 
-        # Remove marker interface
+        notify(BeforeObjectCheckinEvent(item))
+
+        # Remove and add marker interface
         noLongerProvides(item, ICheckedOut)
+        alsoProvides(item, ICheckedIn)
 
         # Restore View permission of item and children by using the workflow
         # tool
@@ -108,8 +112,6 @@ class Versioner(object):
             if hasattr(aq_base(ob), 'updateRoleMappingsFor'):
                 wfs[ob.id] = ob
         wf._recursiveUpdateRoleMappings(item, wfs)
-
-        notify(BeforeObjectCheckinEvent(item))
 
         # Find the folder where these portal type versions are stored
         portal = getToolByName(item, 'portal_url').getPortalObject()
@@ -174,6 +176,17 @@ class VersionMetadata(AttributeAnnotations):
             )
         )
 
+    def getPhysicalPath(self):
+        return self.context.getPhysicalPath()
+
     @property
     def token(self):
         return self[ANNOT_KEY].get('token', None)
+
+    @property
+    def state(self):
+        if ICheckedOut.providedBy(self.context):
+            return 'checked_out'
+        if ICheckedIn.providedBy(self.context):
+            return 'checked_in'
+        return None
