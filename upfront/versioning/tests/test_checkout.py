@@ -74,7 +74,7 @@ class TestCheckout(VersioningTestCase):
         copy_two = utility.checkout(self.portal.repository.apple)
         self.assertEquals(copy_one, copy_two)
 
-    def test_delete_checkedout(self):
+    def test_checkout_delete(self):
         """Item is checked out and deleted"""
         utility = getUtility(IVersioner)
         copy = utility.checkout(self.portal.repository.apple)
@@ -84,6 +84,28 @@ class TestCheckout(VersioningTestCase):
         # Item may not be in catalog anymore
         brains = self.portal.upfront_versioning_catalog(path=copy_path)
         self.failIf(brains)
+
+    def test_checkout_move(self):
+        """Item is checked out and moved"""
+        utility = getUtility(IVersioner)
+        workspace = utility.getWorkspace(self.portal)
+        copy = utility.checkout(self.portal.repository.apple)
+        old_copy_path = '/'.join(copy.getPhysicalPath())
+
+        # Create a new folder in workspace and move the copy there
+        temp = _createObjectByType('Folder', workspace, 'temp')
+        cp = copy.aq_parent.manage_cutObjects(ids=[copy.id])
+        res = temp.manage_pasteObjects(cp)
+        new_copy = temp._getOb(res[0]['new_id'])
+        new_copy_path = '/'.join(new_copy.getPhysicalPath())
+
+        # Original copy path may not be in catalog anymore
+        brains = self.portal.upfront_versioning_catalog(path=old_copy_path)
+        self.failIf(brains)
+
+        # New copy path must be in catalog
+        brains = self.portal.upfront_versioning_catalog(path=new_copy_path)
+        self.failUnless(brains)
 
 def test_suite():
     from unittest import TestSuite, makeSuite

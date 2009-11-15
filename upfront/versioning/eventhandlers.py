@@ -82,9 +82,23 @@ def afterATObjectCheckinEvent(ob, event):
             o.reindexObject()
 
 def onATObjectMovedEvent(ob, event):
+    """Objects need to be recatalogued or removed when moves and 
+    deletes occur"""
+
     if event.oldParent and event.newParent and event.oldName and event.newName:
-        # A move took place
-        pass
+        # A move took place. Catalog only if object is already in the catalog.
+        vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)        
+        if vc is not None:
+            pth = '/'.join(event.oldParent.getPhysicalPath()) \
+                + '/' +event.oldName
+            if vc.isCatalogued(pth):
+                vc.uncatalog_object(pth)
+                vc.catalog_object(
+                    ob, 
+                    '/'.join(ob.getPhysicalPath()),
+                    skip_interface_check=True
+                )
+        
     elif event.oldParent and event.oldName:
         # A delete took place
         vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)
