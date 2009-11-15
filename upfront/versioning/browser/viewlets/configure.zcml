@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="upfront.versioning">
+
+    <browser:viewlet
+        for="upfront.versioning.interfaces.ICheckedOut"
+        name="upfront.versioning-versions"
+        manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+        class=".versions.VersionsViewlet"
+        permission="zope2.View"
+        />
+
+    <browser:viewlet
+        for="upfront.versioning.interfaces.ICheckedIn"
+        name="upfront.versioning-versions"
+        manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+        class=".versions.VersionsViewlet"
+        permission="zope2.View"
+        />
+
+</configure>

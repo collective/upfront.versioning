@@ -38,4 +38,6 @@
         permission="cmf.ModifyPortalContent" 
         />
 
+    <include package=".viewlets" />
+
 </configure>
