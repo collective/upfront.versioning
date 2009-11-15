@@ -80,3 +80,15 @@ def afterATObjectCheckinEvent(ob, event):
         if not portal.isExpired(o):
             o.setExpirationDate(expires)
             o.reindexObject()
+
+def onATObjectMovedEvent(ob, event):
+    if event.oldParent and event.newParent and event.oldName and event.newName:
+        # A move took place
+        pass
+    elif event.oldParent and event.oldName:
+        # A delete took place
+        vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)
+        if vc is not None:
+            vc.uncatalog_object(
+                '/'.join(event.oldParent.getPhysicalPath()) + '/' + event.oldName
+            )

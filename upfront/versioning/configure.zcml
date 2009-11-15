@@ -41,14 +41,28 @@
 
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
-        .interfaces.IBeforeObjectCheckinEvent"
+            .interfaces.IBeforeObjectCheckinEvent"
         handler=".eventhandlers.beforeATObjectCheckinEvent"
         /> 
 
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
-        .interfaces.IAfterObjectCheckinEvent"
+            .interfaces.IAfterObjectCheckinEvent"
         handler=".eventhandlers.afterATObjectCheckinEvent"
+        /> 
+
+    <!--
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject      
+            zope.app.container.interfaces.IObjectRemovedEvent"
+        handler=".eventhandlers.onATObjectRemovedEvent"
+        /> 
+    -->
+
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject      
+            zope.app.container.interfaces.IObjectMovedEvent"
+        handler=".eventhandlers.onATObjectMovedEvent"
         /> 
 
     <include package=".browser" />

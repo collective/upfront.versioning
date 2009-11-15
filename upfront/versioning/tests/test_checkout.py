@@ -27,7 +27,7 @@ class TestCheckout(VersioningTestCase):
         _createHomeFolder(self.portal, 'member', take_ownership=0)
 
     def test_can_checkout(self):
-        """Can content be checked out?"""
+        """Can item be checked out?"""
         utility = getUtility(IVersioner)
 
         # Item has not been checked out
@@ -38,7 +38,7 @@ class TestCheckout(VersioningTestCase):
         self.failIf(utility.can_checkout(copy))
 
     def test_fresh_checkout(self):
-        """Content is not yet in workspace. Check it out."""
+        """Item is not yet in workspace. Check it out."""
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
         copy = utility.checkout(self.portal.repository.apple)
@@ -68,12 +68,22 @@ class TestCheckout(VersioningTestCase):
         self.failUnless(brains)      
 
     def test_already_checkedout(self):
-        """Content is already checked out. Check it out again."""
-        utility = getUtility(IVersioner)
-        workspace = utility.getWorkspace(self.portal)
+        """Item is already checked out. Check it out again."""
+        utility = getUtility(IVersioner)      
         copy_one = utility.checkout(self.portal.repository.apple)
         copy_two = utility.checkout(self.portal.repository.apple)
         self.assertEquals(copy_one, copy_two)
+
+    def test_delete_checkedout(self):
+        """Item is checked out and deleted"""
+        utility = getUtility(IVersioner)
+        copy = utility.checkout(self.portal.repository.apple)
+        copy_path = '/'.join(copy.getPhysicalPath())
+        copy.aq_parent.manage_delObjects([copy.id])
+
+        # Item may not be in catalog anymore
+        brains = self.portal.upfront_versioning_catalog(path=copy_path)
+        self.failIf(brains)
 
 def test_suite():
     from unittest import TestSuite, makeSuite
