@@ -31,10 +31,11 @@ class VersionsViewlet(BrowserView):
         li = []
         for brain in vc.getVersionsOf(aq_inner(self.context)):
             ob = brain.getObject()
+            adapted = IVersionMetadata(ob)
             di = dict(
-                state=IVersionMetadata(ob).state,
+                state=adapted.state,
                 owner=ob.getOwner(),
-                version='xxx',
+                version=adapted.version,
                 url=member.has_permission(View, ob) and brain.getURL() or None,
                 title=ob.title,
             )    

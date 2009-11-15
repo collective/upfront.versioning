@@ -57,6 +57,9 @@ class IVersionMetadata(IAnnotations):
         """Return 'checked_out' if context implements ICheckedOut or return 
         'checked_in' if context implements ICheckedIn."""
 
+    def version():
+        """Return version info from parent id if possible, None otherwise"""
+
 class IVersioningEvent(IObjectEvent):
     """Base class for versioning events"""
 

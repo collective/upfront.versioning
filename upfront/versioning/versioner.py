@@ -166,6 +166,7 @@ class VersionMetadata(AttributeAnnotations):
         self.context = obj
 
     def initialize(self, item):        
+        # todo: copy annotation info from item if it is present to preserve chain
         if not self.has_key(ANNOT_KEY):
             self[ANNOT_KEY] = PersistentDict()                
         wf = getToolByName(item, 'portal_workflow')
@@ -192,3 +193,12 @@ class VersionMetadata(AttributeAnnotations):
         if ICheckedIn.providedBy(self.context):
             return 'checked_in'
         return None
+
+    @property
+    def version(self):        
+        parent = self.context.aq_parent
+        try:
+            i = int(parent.id)
+            return i
+        except ValueError:
+            return None
