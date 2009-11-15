@@ -51,14 +51,6 @@
         handler=".eventhandlers.afterATObjectCheckinEvent"
         /> 
 
-    <!--
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject      
-            zope.app.container.interfaces.IObjectRemovedEvent"
-        handler=".eventhandlers.onATObjectRemovedEvent"
-        /> 
-    -->
-
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject      
             zope.app.container.interfaces.IObjectMovedEvent"
