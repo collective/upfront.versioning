@@ -164,10 +164,10 @@ class VersionMetadata(AttributeAnnotations):
     def __init__(self, obj):
         self.obj = obj
         self.context = obj
-        if not self.has_key(ANNOT_KEY):
-            self[ANNOT_KEY] = PersistentDict()
 
-    def initialize(self, item):
+    def initialize(self, item):        
+        if not self.has_key(ANNOT_KEY):
+            self[ANNOT_KEY] = PersistentDict()                
         wf = getToolByName(item, 'portal_workflow')
         self[ANNOT_KEY].update(
             dict(
@@ -175,13 +175,15 @@ class VersionMetadata(AttributeAnnotations):
                 review_state=wf.getInfoFor(item, 'review_state'),
             )
         )
-
+  
     def getPhysicalPath(self):
         return self.context.getPhysicalPath()
 
     @property
     def token(self):
-        return self[ANNOT_KEY].get('token', None)
+        if self.has_key(ANNOT_KEY):
+            return self[ANNOT_KEY].get('token', None)
+        return self.context.UID()
 
     @property
     def state(self):

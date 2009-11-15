@@ -33,10 +33,12 @@ class VersioningCatalog(CatalogTool):
             if meta not in self.schema():
                 self.manage_addColumn(meta)
 
-    def catalog_object(self, obj, uid=None, idxs=None, update_metadata=1, pghandler=None):
-        """Only catalog obj if it provides ICheckedOut or ICheckedIn"""
-        if not (ICheckedOut.providedBy(obj) or ICheckedIn.providedBy(obj)):
-            return
+    def catalog_object(self, obj, uid=None, idxs=None, update_metadata=1, pghandler=None, skip_interface_check=False):
+        """If skip_interface_check then only catalog obj if it provides 
+        ICheckedOut or ICheckedIn"""
+        if not skip_interface_check:
+            if not (ICheckedOut.providedBy(obj) or ICheckedIn.providedBy(obj)):
+                return
         CatalogTool.catalog_object(
             self, IVersionMetadata(obj), uid, idxs, update_metadata, pghandler
         )

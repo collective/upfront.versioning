@@ -1,6 +1,8 @@
-"""Default event handlers. A typical custom use case would be to delete 
-comments when an object is checked out. It is left as an exercise to the 
-reader :)"""
+"""Default event handlers. Versioning *will* work without the presence 
+of any of these handlers but some unit tests will fail.
+
+These handlers enhance the user interface and enable us to ask for 
+information on an object's versions."""
 
 import logging
 from DateTime import DateTime
@@ -44,8 +46,9 @@ def afterATObjectCheckoutEvent(ob, event):
     if hasattr(unwrapped, 'workflow_history'):
         unwrapped.workflow_history = {}
    
-    # Catalog checked out item
+    # Catalog checked out original and item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
+    vc.catalog_object(event.original, skip_interface_check=True)    
     vc.catalog_object(ob)
 
 def beforeATObjectCheckinEvent(ob, event):

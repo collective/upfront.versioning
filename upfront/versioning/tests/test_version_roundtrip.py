@@ -52,6 +52,10 @@ class TestVersionRoundtrip(VersioningTestCase):
         self.failUnless(self.checkedin.id == self.portal.repository.apple.id)
         self.failUnless(self.checkedin_collide.id == self.portal.apple.id)
 
+    def test_expired(self):
+        """Verify old version is expired"""
+        self.failUnless(self.portal.isExpired(self.portal.repository.apple))
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 
