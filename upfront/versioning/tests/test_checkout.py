@@ -106,7 +106,7 @@ class TestCheckout(VersioningTestCase):
         # New copy path must be in catalog
         brains = self.portal.upfront_versioning_catalog(path=new_copy_path)
         self.failUnless(brains)
-    
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

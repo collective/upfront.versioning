@@ -60,7 +60,23 @@
         attribute="checkin"
         permission="cmf.ModifyPortalContent" 
         />
-    
+
+    <!-- Contronel panel -->
+    <adapter factory=".configlets.VersioningSettingsConfigletAdapter" />
+
+    <browser:page
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        name="upfront.versioning-settings"
+        class=".configlets.VersioningSettingsConfiglet"
+        permission="cmf.ManagePortal"
+     /> 
+
+     <utility
+        provides="zope.schema.interfaces.IVocabularyFactory"
+        component=".configlets.portal_types"
+        name="upfront.versioning-portal_types"
+        />
+ 
     <include package=".viewlets" />
 
 </configure>

@@ -97,3 +97,6 @@ class IBeforeObjectCheckinEvent(IVersioningEvent):
 
 class IAfterObjectCheckinEvent(IVersioningEvent):
     original = Attribute(u"The object that was originally cloned to create the copy")
+
+class IVersioningSettings(Interface):
+    """Interface for persistent utility which stores product settings"""

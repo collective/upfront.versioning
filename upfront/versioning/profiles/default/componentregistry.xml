@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<componentregistry>
+  <adapters/>
+  <utilities>
+    <utility
+       interface="upfront.versioning.interfaces.IVersioningSettings"
+       factory="upfront.versioning.utilities.VersioningSettings"
+       name="upfront.versioning-settings" />
+  </utilities>
+</componentregistry>

@@ -50,6 +50,11 @@ class TestDeriveCopy(VersioningTestCase):
         # IVersionMetadata annotation must be gone
         self.failIf(IVersionMetadata(copy).has_key(ANNOT_KEY))
 
+    def test_crazy_derive(self):
+        """Checkout the entire Plone site"""
+        utility = getUtility(IVersioner)
+        self.assertRaises(RuntimeError, utility.derive_copy, self.portal)
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

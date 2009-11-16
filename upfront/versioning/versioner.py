@@ -25,23 +25,35 @@ ANNOT_KEY = 'IVersionMetadata'
 # Permission decorators - grok has something nicer but we do not want an 
 # extra dependency.
 def requireView(func):
-
     def new(self, item):
         member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
         if not member.has_permission(View, item):
             return False       
         return func(self, item)
-
     return new
 
 def requireModifyPortalContent(func):
-
     def new(self, item):
         member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
         if not member.has_permission(ModifyPortalContent, item):
             return False       
         return func(self, item)
+    return new
 
+def check_children(func):
+    """A check which cannot be performed as a guard since it is slow. Calling 
+    this decorator on eg. the Plone site will raise because the site contains 
+    content marked with ICheckedOut or ICheckedIn . There is also a hard 
+    child limit of 30."""
+    def new(self, item):
+        counter = 0
+        for dontcare, child in item.ZopeFind(item, search_sub=1):
+            if ICheckedOut.providedBy(child) or ICheckedIn.providedBy(child):
+                raise RuntimeError, "Child is marked with ICheckedOut or ICheckedIn"
+            if counter > 30:
+                raise RuntimeError, "The object contains more than 30 children"
+            counter += 1                
+        return func(self, item)
     return new
 
 class Versioner(object):
@@ -105,6 +117,7 @@ class Versioner(object):
         return True
 
     @requireView
+    @check_children
     def derive_copy(self, item):
         if not self.can_derive_copy(item):
             raise RuntimeError, "Cannot derive copy of %s" % item.absolute_url()
@@ -163,8 +176,6 @@ class Versioner(object):
         """Used by both add_to_repository and checkin"""
 
         # todo: use semaphore where appropriate
-        # todo: version folders are sparse like with SVN, but that does
-        # allow multiple checkins in a single transaction
 
         # Fetch the original item
         original = None
@@ -243,6 +254,7 @@ class Versioner(object):
         return checkedin
 
     @requireModifyPortalContent
+    @check_children
     def add_to_repository(self, item):
         if not self.can_add_to_repository(item):
             raise RuntimeError, "Cannot add %s to repository" % item.absolute_url()
