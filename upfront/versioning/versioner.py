@@ -16,7 +16,8 @@ from Products.DCWorkflow.utils import modifyRolesForPermission
 from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
-from interfaces import IVersioner, IVersionMetadata, ICheckedOut, ICheckedIn
+from interfaces import IVersioner, IVersionMetadata, ICheckedOut, ICheckedIn, \
+    IVersioningSettings
 from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
@@ -37,6 +38,17 @@ def requireModifyPortalContent(func):
         member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
         if not member.has_permission(ModifyPortalContent, item):
             return False       
+        return func(self, item)
+    return new
+
+def check_types(func):
+    """Check whether context type is versionable"""
+    def new(self, item):
+        portal = getToolByName(item, 'portal_url').getPortalObject()
+        sm = portal.getSiteManager()
+        utility = sm.getUtility(IVersioningSettings, 'upfront.versioning-settings')
+        if getattr(item, 'portal_type', None) not in utility.versionable_types:
+            return False
         return func(self, item)
     return new
 
@@ -74,6 +86,7 @@ class Versioner(object):
         return home.workspace
 
     @requireView
+    @check_types
     def can_derive_copy(self, item):
         parent = item
         while parent is not None:
@@ -83,6 +96,7 @@ class Versioner(object):
         return True
 
     @requireModifyPortalContent
+    @check_types
     def can_add_to_repository(self, item):
         parent = item
         while parent is not None:
@@ -92,6 +106,7 @@ class Versioner(object):
         return True
 
     @requireModifyPortalContent
+    @check_types
     def can_checkout(self, item):
         if not ICheckedIn.providedBy(item):
             return False
@@ -104,6 +119,7 @@ class Versioner(object):
         return True
 
     @requireModifyPortalContent
+    @check_types
     def can_checkin(self, item):
         if not ICheckedOut.providedBy(item):
             return False

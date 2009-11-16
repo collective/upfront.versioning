@@ -10,4 +10,4 @@ class VersioningSettings(SimpleItem):
 
     implements(IVersioningSettings)
 
-    versionable_types = ['Page']
+    versionable_types = ['Document']

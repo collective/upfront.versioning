@@ -16,7 +16,8 @@ from upfront.versioning import _
 from upfront.versioning.interfaces import IVersioningSettings
 
 def portal_types(context):
-    items = (('Page','Page'), ('Folder','Folder'))
+    # todo: softcode
+    items = (('Document','Document'), ('Folder','Folder'))
     return SimpleVocabulary.fromItems(items)
 
 class IVersioningSettingsSchema(Interface):
@@ -59,21 +60,3 @@ class VersioningSettingsConfiglet(ControlPanelForm):
     label = _("Upfront Versioning Settings")
     description = _("")
     form_name = _("Upfront Versioning Settings")
-
-    '''
-    def _getUtility(self):
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        sm = portal.getSiteManager()
-        return sm.getUtility(IVersioningSettings, 'upfront.versioning-settings')
-
-    @action("submit")
-    def action_submit(self, action, data):
-        utility = self._getUtility()
-        utility.versionable_types = data['versionable_types']
-
-    def getVersionableTypes(self):
-        utility = self._getUtility()
-        return utility.versionable_types
-
-    form_fields['versionable_types'].get_rendered = getVersionableTypes
-    '''

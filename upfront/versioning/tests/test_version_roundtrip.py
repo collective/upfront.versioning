@@ -6,7 +6,7 @@ from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
 from upfront.versioning.interfaces import IVersioner, ICheckedOut, \
-    IVersionMetadata
+    IVersionMetadata, IVersioningSettings
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestVersionRoundtrip(VersioningTestCase):
@@ -14,6 +14,11 @@ class TestVersionRoundtrip(VersioningTestCase):
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
 
+        # Hack persistent utility since we need Folder to be versionable
+        sm = self.portal.getSiteManager()
+        utility = sm.getUtility(IVersioningSettings, 'upfront.versioning-settings')
+        utility.versionable_types = ['Document', 'Folder']
+               
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
 
