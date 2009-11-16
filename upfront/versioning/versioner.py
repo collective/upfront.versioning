@@ -191,9 +191,13 @@ class Versioner(object):
         repository = portal.repository
         pt_id = getUtility(IURLNormalizer).normalize(item.portal_type)
         if pt_id not in repository.objectIds():
-            _createObjectByType(
+            pt_folder = _createObjectByType(
                 'Large Plone Folder', repository, pt_id, title=item.portal_type
             )
+            fti = portal.portal_types.getTypeInfo('Large Plone Folder')
+            fti._finishConstruction(pt_folder)
+            wf.doActionFor(pt_folder, 'publish')
+
         pt_folder = repository._getOb(pt_id)
 
         # Find the latest version number
@@ -213,6 +217,9 @@ class Versioner(object):
         folder = _createObjectByType(
                 'Folder', pt_folder, version_id, title=version_id
         )
+        fti = portal.portal_types.getTypeInfo('Folder')
+        fti._finishConstruction(folder)
+        wf.doActionFor(folder, 'publish')
 
         # Move our copy there
         cp = item.aq_parent.manage_cutObjects(ids=[item.id])
