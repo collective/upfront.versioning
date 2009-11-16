@@ -36,7 +36,15 @@
         attribute="can_checkin"
         permission="cmf.ModifyPortalContent" 
         />
-   
+
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-derive-copy"
+        class=".views.VersioningView"
+        attribute="derive_copy"
+        permission="zope2.View" 
+        />
+  
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-add-to-repository"
