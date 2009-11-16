@@ -1,5 +1,6 @@
 import unittest
 from AccessControl.PermissionRole import rolesForPermissionOn
+from zope.interface import alsoProvides
 from zope.component import getUtility
 
 from Products.CMFPlone.utils import _createObjectByType
@@ -14,35 +15,27 @@ class TestCheckout(VersioningTestCase):
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
 
-        self.document_fti = self.portal.portal_types.getTypeInfo('Document')
-
-        # Create a few items
-        self.loginAsPortalOwner()
-        apple = _createObjectByType('Document', self.portal.repository, 'apple')
-        self.document_fti._finishConstruction(apple)
-        self.portal.portal_workflow.doActionFor(apple, 'publish')
-
-        # These tests must be run while logged in as a member since we 
-        # need a workspace.
-        self.login('member')
-        _createHomeFolder(self.portal, 'member', take_ownership=0)
-
     def test_can_checkout(self):
         """Can item be checked out?"""
         utility = getUtility(IVersioner)
 
-        # Item has not been checked out
-        self.failUnless(utility.can_checkout(self.portal.repository.apple))
+        # Item has not been checked out and we do not have Modify Portal 
+        # Content permission
+        self.failIf(utility.can_checkout(self.portal.repository.document['00000001']['repo-admin']))
 
-        # Item has been checked out
-        copy = utility.checkout(self.portal.repository.apple)
+        # Item has not been checked out and we have Modify Portal Content 
+        # permission
+        self.failUnless(utility.can_checkout(self.portal.repository.document['00000002']['repo-member']))
+
+        # Attempt to checkout a checked out item
+        copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
         self.failIf(utility.can_checkout(copy))
 
     def test_fresh_checkout(self):
         """Item is not yet in workspace. Check it out."""
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
-        copy = utility.checkout(self.portal.repository.apple)
+        copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
 
         # Is it there?
         self.failUnless(copy in workspace.objectValues())
@@ -61,15 +54,15 @@ class TestCheckout(VersioningTestCase):
 
         # Check metadata
         adapted = IVersionMetadata(copy)
-        self.assertEquals(adapted.token, self.portal.repository.apple.UID())
+        self.assertEquals(adapted.token, self.portal.repository.document['00000002']['repo-member'].UID())
         self.assertEquals(adapted.state, 'checked_out')
-        self.assertEquals(adapted.version, None)
+        self.assertEquals(adapted.version, 2)
 
         # Is checked out item in catalog?
         vc = self.portal.upfront_versioning_catalog
         brains = vc(
             path='/'.join(copy.getPhysicalPath()), 
-            token=self.portal.repository.apple.UID(),
+            token=self.portal.repository.document['00000002']['repo-member'].UID(),
             state='checked_out'
         )
         self.failUnless(brains)      
@@ -77,14 +70,14 @@ class TestCheckout(VersioningTestCase):
     def test_already_checkedout(self):
         """Item is already checked out. Check it out again."""
         utility = getUtility(IVersioner)      
-        copy_one = utility.checkout(self.portal.repository.apple)
-        copy_two = utility.checkout(self.portal.repository.apple)
+        copy_one = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
+        copy_two = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
         self.assertEquals(copy_one, copy_two)
 
     def test_checkout_delete(self):
         """Item is checked out and deleted"""
         utility = getUtility(IVersioner)
-        copy = utility.checkout(self.portal.repository.apple)
+        copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
         copy_path = '/'.join(copy.getPhysicalPath())
         copy.aq_parent.manage_delObjects([copy.id])
 
@@ -96,7 +89,7 @@ class TestCheckout(VersioningTestCase):
         """Item is checked out and moved"""
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
-        copy = utility.checkout(self.portal.repository.apple)
+        copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
         old_copy_path = '/'.join(copy.getPhysicalPath())
 
         # Create a new folder in workspace and move the copy there

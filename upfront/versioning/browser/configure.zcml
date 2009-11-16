@@ -7,10 +7,26 @@
 
     <browser:page 
         for="*"
+        name="upfront.versioning-can-derive-copy"
+        class=".views.VersioningView"
+        attribute="can_derive_copy"
+        permission="zope2.View" 
+        />
+
+    <browser:page 
+        for="*"
+        name="upfront.versioning-can-add-to-repository"
+        class=".views.VersioningView"
+        attribute="can_add_to_repository"
+        permission="cmf.ModifyPortalContent" 
+        />
+
+    <browser:page 
+        for="*"
         name="upfront.versioning-can-checkout"
         class=".views.VersioningView"
         attribute="can_checkout"
-        permission="zope2.View" 
+        permission="cmf.ModifyPortalContent" 
         />
 
     <browser:page 
@@ -20,14 +36,21 @@
         attribute="can_checkin"
         permission="cmf.ModifyPortalContent" 
         />
+   
+    <browser:page 
+        for="Products.Archetypes.interfaces.IBaseObject"
+        name="upfront.versioning-add-to-repository"
+        class=".views.VersioningView"
+        attribute="add_to_repository"
+        permission="cmf.ModifyPortalContent" 
+        />
 
-    <!-- todo: permission must for an authenticated user -->
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-checkout"
         class=".views.VersioningView"
         attribute="checkout"
-        permission="zope2.View" 
+        permission="cmf.ModifyPortalContent" 
         />
 
     <browser:page 
@@ -37,7 +60,7 @@
         attribute="checkin"
         permission="cmf.ModifyPortalContent" 
         />
-
+    
     <include package=".viewlets" />
 
 </configure>

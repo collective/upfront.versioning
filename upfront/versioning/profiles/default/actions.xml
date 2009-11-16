@@ -31,4 +31,19 @@
    <property name="visible">True</property>
   </object>
  </object>
+ <object name="object_buttons" meta_type="CMF Action Category">
+  <property name="title"></property>
+  <object name="add_to_repository" meta_type="CMF Action" i18n:domain="upfront.versioning">
+   <property name="title" i18n:translate="">Add to repository</property>
+   <property name="description" i18n:translate=""></property>
+   <property name="url_expr">string:$object_url/@@upfront.versioning-add-to-repository</property>
+   <property name="icon_expr"></property>
+   <property
+      name="available_expr">python:object.restrictedTraverse('@@upfront.versioning-can-add-to-repository')()</property>
+   <property name="permissions">
+    <element value="View"/>
+   </property>
+   <property name="visible">True</property>
+  </object>
+ </object>
 </object>

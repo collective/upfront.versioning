@@ -12,24 +12,38 @@ class IVersioner(Interface):
         A context is needed to be able to find the membership tool.
         """
 
+    def can_derive_copy(item):
+        """Return true if item and none of its parents provide ICheckedOut, 
+        false otherwise.
+         
+        todo: how to prevent deriving the Plone site?"""
+
+    def can_add_to_repository(item):
+        """Return true if item and none of its parents provide either 
+        ICheckedOut or ICheckedIn, false otherwise.
+         
+        todo: how to prevent checking in the Plone site?"""
+
     def can_checkout(item):
-        """Return true if ICheckedOut interface is not provided by item or 
-        any parent, false otherwise.
-        
-        todo: how to prevent attempt to checkout Plone site?"""
+        """Return true if ICheckedIn interface is provided by item and 
+        ICheckedOut not by any parent, false otherwise."""
 
     def can_checkin(item):
         """Return true if ICheckedOut interface is provided by item and not 
         by any parent, false otherwise."""
 
+    def derive_copy(item):
+        """Copy item to authenticated member's workspace. Return copied 
+        item."""
+
     def checkout(item):
-        """Checkout item to authenticated member's workspace. Returns 
+        """Checkout item to authenticated member's workspace. Returns
         checked out item.
         """
 
     def checkin(item):
         """Checkin item from authenticated member's workspace to 
-        repository. Returns checked in item.
+        repository. Return checked in item.
         """
 
 class ICheckedOut(Interface):
@@ -62,6 +76,9 @@ class IVersionMetadata(IAnnotations):
 
     def version():
         """Return version info from parent id if possible, None otherwise"""
+
+    def remove():
+        """Remove the IVersionMetadata annotation"""
 
 class IVersioningEvent(IObjectEvent):
     """Base class for versioning events"""

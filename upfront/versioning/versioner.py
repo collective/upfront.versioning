@@ -10,6 +10,7 @@ from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.annotation.attribute import AttributeAnnotations
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.DCWorkflow.utils import modifyRolesForPermission
 from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
@@ -19,6 +20,28 @@ from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
 ANNOT_KEY = 'IVersionMetadata'
+
+# Permission decorators - grok has something nicer but we do not want an 
+# extra dependency.
+def requireView(func):
+
+    def new(self, item):
+        member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
+        if not member.has_permission(View, item):
+            return False       
+        return func(self, item)
+
+    return new
+
+def requireModifyPortalContent(func):
+
+    def new(self, item):
+        member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
+        if not member.has_permission(ModifyPortalContent, item):
+            return False       
+        return func(self, item)
+
+    return new
 
 class Versioner(object):
     """Provide versioning methods"""
@@ -37,7 +60,8 @@ class Versioner(object):
             home.invokeFactory('Folder', id='workspace', title='Workspace')
         return home.workspace
 
-    def can_checkout(self, item):
+    @requireView
+    def can_derive_copy(self, item):
         parent = item
         while parent is not None:
             if ICheckedOut.providedBy(parent):
@@ -45,6 +69,28 @@ class Versioner(object):
             parent = getattr(parent, 'aq_parent', None)
         return True
 
+    @requireModifyPortalContent
+    def can_add_to_repository(self, item):
+        parent = item
+        while parent is not None:
+            if ICheckedOut.providedBy(parent) or ICheckedIn.providedBy(parent):
+                return False
+            parent = getattr(parent, 'aq_parent', None)
+        return True
+
+    @requireModifyPortalContent
+    def can_checkout(self, item):
+        if not ICheckedIn.providedBy(item):
+            return False
+
+        parent = item
+        while parent is not None:
+            if ICheckedOut.providedBy(parent):
+                return False
+            parent = getattr(parent, 'aq_parent', None)
+        return True
+
+    @requireModifyPortalContent
     def can_checkin(self, item):
         if not ICheckedOut.providedBy(item):
             return False
@@ -56,8 +102,33 @@ class Versioner(object):
             parent = getattr(parent, 'aq_parent', None)
 
         return True
-      
+
+    @requireView
+    def derive_copy(self, item):
+        if not self.can_derive_copy(item):
+            raise RuntimeError, "Cannot derive copy of %s" % item.absolute_url()
+
+        workspace = self.getWorkspace(item)
+
+        # Copy the item
+        cp = item.aq_parent.manage_copyObjects([item.id])
+        res = workspace.manage_pasteObjects(cp)
+        copy = workspace._getOb(res[0]['new_id'])
+
+        # Remove marker interfaces if it applies
+        if ICheckedIn.providedBy(copy):
+            noLongerProvides(copy, ICheckedIn)
+
+        # Remove IVersionMetadata annotation if it exists
+        IVersionMetadata(copy).remove()
+
+        return copy
+
+    @requireModifyPortalContent
     def checkout(self, item):
+        if not self.can_checkout(item):
+            raise RuntimeError, "Cannot check out %s" % item.absolute_url()
+
         # Scan the workspace for item. If it is already checked out then 
         # return it.
         workspace = self.getWorkspace(item)
@@ -87,7 +158,9 @@ class Versioner(object):
 
         return copy
 
-    def checkin(self, item):
+    def _checkin(self, item):
+        """Used by both add_to_repository and checkin"""
+
         # todo: use semaphore where appropriate
         # todo: version folders are sparse like with SVN, but that does
         # allow multiple checkins in a single transaction
@@ -158,6 +231,22 @@ class Versioner(object):
 
         return checkedin
 
+    @requireModifyPortalContent
+    def add_to_repository(self, item):
+        if not self.can_add_to_repository(item):
+            raise RuntimeError, "Cannot add %s to repository" % item.absolute_url()
+
+        # Initialize metadata with self since item is not based on anything
+        IVersionMetadata(item).initialize(item)
+
+        return self._checkin(item)
+
+    @requireModifyPortalContent
+    def checkin(self, item):
+        if not self.can_checkin(item):
+            raise RuntimeError, "Cannot check in %s" % item.absolute_url()
+        return self._checkin(item)
+
 class VersionMetadata(AttributeAnnotations):
     """Manages version metadata on an object"""
 
@@ -212,4 +301,8 @@ class VersionMetadata(AttributeAnnotations):
         if self.has_key(ANNOT_KEY):
             return self[ANNOT_KEY].get('version', None)
         return None
+
+    def remove(self):
+        if self.has_key(ANNOT_KEY):
+            del self[ANNOT_KEY]
 

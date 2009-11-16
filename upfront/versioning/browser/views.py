@@ -12,6 +12,14 @@ class VersioningView(BrowserView):
     """
     """
 
+    def can_derive_copy(self):
+        utility = getUtility(IVersioner)
+        return utility.can_derive_copy(aq_inner(self.context))
+
+    def can_add_to_repository(self):
+        utility = getUtility(IVersioner)
+        return utility.can_add_to_repository(aq_inner(self.context))
+
     def can_checkout(self):
         utility = getUtility(IVersioner)
         return utility.can_checkout(aq_inner(self.context))
@@ -19,6 +27,24 @@ class VersioningView(BrowserView):
     def can_checkin(self):
         utility = getUtility(IVersioner)
         return utility.can_checkin(aq_inner(self.context))
+
+    def derive_copy(self):
+        utility = getUtility(IVersioner)
+        obj = utility.derive_copy(aq_inner(self.context))
+        msg = _("You have derived a copy")
+        getToolByName(self.context, 'plone_utils').addPortalMessage(
+            msg, type='info'
+        )
+        self.request.response.redirect(obj.absolute_url())            
+
+    def add_to_repository(self):
+        utility = getUtility(IVersioner)
+        obj = utility.add_to_repository(aq_inner(self.context))
+        msg = _("The item has been added to the repository")
+        getToolByName(self.context, 'plone_utils').addPortalMessage(
+            msg, type='info'
+        )
+        self.request.response.redirect(obj.absolute_url())            
 
     def checkout(self):
         utility = getUtility(IVersioner)

@@ -14,27 +14,22 @@ class TestVersionRoundtrip(VersioningTestCase):
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
 
-        self.document_fti = self.portal.portal_types.getTypeInfo('Document')
-
-        # Create a few items
-        self.loginAsPortalOwner()
-        apple = _createObjectByType('Document', self.portal.repository, 'apple')
-        self.document_fti._finishConstruction(apple)
-        self.portal.portal_workflow.doActionFor(apple, 'publish')
-
-        # Create a different item with the same id. It must live in another
-        # container. We use portal.
-        apple_collide = _createObjectByType('Document', self.portal, 'apple')
-
-        # These tests must be run while logged in as a member since we 
-        # need a workspace.
-        self.login('member')
-        _createHomeFolder(self.portal, 'member', take_ownership=0)
-
-        # Checkout apple and the second apple
         utility = getUtility(IVersioner)
-        copy = utility.checkout(self.portal.repository.apple)
-        copy_collide = utility.checkout(self.portal.apple)
+        workspace = utility.getWorkspace(self.portal)
+
+        # Create a folder with id repo-member. We want its id to collide 
+        # with the document repo-member.
+        ob = _createObjectByType('Folder', workspace, 'repo-member')
+        fti = self.portal.portal_types.getTypeInfo('Folder')
+        fti._finishConstruction(ob)
+        transaction.savepoint(optimistic=True)
+
+        # Add folder to repository
+        utility.add_to_repository(workspace['repo-member'])
+
+        # Checkout items
+        copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
+        copy_collide = utility.checkout(self.portal.repository.folder['00000001']['repo-member'])
 
         transaction.savepoint(optimistic=True)
 
@@ -50,12 +45,12 @@ class TestVersionRoundtrip(VersioningTestCase):
 
     def test_id(self):
         """Verify checked in item's id matches original item's id"""
-        self.failUnless(self.checkedin.id == self.portal.repository.apple.id)
-        self.failUnless(self.checkedin_collide.id == self.portal.apple.id)
+        self.assertEquals(self.checkedin.id, 'repo-member')
+        self.assertEquals(self.checkedin_collide.id, 'repo-member')
 
     def test_expired(self):
         """Verify old version is expired"""
-        self.failUnless(self.portal.isExpired(self.portal.repository.apple))
+        self.failUnless(self.portal.isExpired(self.portal.repository.document['00000002']['repo-member']))
 
     def test_token_chain(self):
         """Checkout an item and check it in, then checkout the latest version 
@@ -65,7 +60,7 @@ class TestVersionRoundtrip(VersioningTestCase):
         copy = utility.checkout(self.checkedin)
 
         self.assertEquals(
-            IVersionMetadata(self.portal.repository.apple).token,
+            IVersionMetadata(self.portal.repository.document['00000002']['repo-member']).token,
             IVersionMetadata(self.checkedin).token
         )            
         self.assertEquals(
