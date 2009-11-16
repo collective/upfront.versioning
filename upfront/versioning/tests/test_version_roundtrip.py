@@ -5,7 +5,8 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, \
+    IVersionMetadata
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestVersionRoundtrip(VersioningTestCase):
@@ -55,6 +56,22 @@ class TestVersionRoundtrip(VersioningTestCase):
     def test_expired(self):
         """Verify old version is expired"""
         self.failUnless(self.portal.isExpired(self.portal.repository.apple))
+
+    def test_token_chain(self):
+        """Checkout an item and check it in, then checkout the latest version 
+        and confirm that original, the checkin and the checkout has the same
+        token."""
+        utility = getUtility(IVersioner)
+        copy = utility.checkout(self.checkedin)
+
+        self.assertEquals(
+            IVersionMetadata(self.portal.repository.apple).token,
+            IVersionMetadata(self.checkedin).token
+        )            
+        self.assertEquals(
+            IVersionMetadata(self.checkedin).token,
+            IVersionMetadata(copy).token
+        )            
 
 def test_suite():
     from unittest import TestSuite, makeSuite

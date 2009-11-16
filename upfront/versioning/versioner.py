@@ -166,16 +166,23 @@ class VersionMetadata(AttributeAnnotations):
         self.context = obj
 
     def initialize(self, item):        
-        # todo: copy annotation info from item if it is present to preserve chain
+        """Copy annotation info from item if it is present to preserve chain, 
+        else fetch attributes from item."""
+
         if not self.has_key(ANNOT_KEY):
             self[ANNOT_KEY] = PersistentDict()                
-        wf = getToolByName(item, 'portal_workflow')
-        self[ANNOT_KEY].update(
-            dict(
-                token=item.UID(),
-                review_state=wf.getInfoFor(item, 'review_state'),
+
+        adapted = IVersionMetadata(item)
+        if adapted.has_key(ANNOT_KEY):
+            self[ANNOT_KEY] = adapted[ANNOT_KEY]
+        else:
+            wf = getToolByName(item, 'portal_workflow')
+            self[ANNOT_KEY].update(
+                dict(
+                    token=item.UID(),
+                    review_state=wf.getInfoFor(item, 'review_state'),
+                )
             )
-        )
   
     def getPhysicalPath(self):
         return self.context.getPhysicalPath()
