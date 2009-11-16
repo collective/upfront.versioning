@@ -16,8 +16,9 @@ from upfront.versioning import _
 from upfront.versioning.interfaces import IVersioningSettings
 
 def portal_types(context):
-    # todo: softcode
-    items = (('Document','Document'), ('Folder','Folder'))
+    pt = getToolByName(context.context, 'portal_url').getPortalObject().portal_types
+    items = [(id, id) for id in pt.objectIds()]
+    items.sort()
     return SimpleVocabulary.fromItems(items)
 
 class IVersioningSettingsSchema(Interface):
