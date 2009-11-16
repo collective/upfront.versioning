@@ -6,7 +6,7 @@
     i18n_domain="upfront.versioning">
 
     <browser:page 
-        for="*"
+        for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-can-derive-copy"
         class=".views.VersioningView"
         attribute="can_derive_copy"
@@ -14,23 +14,23 @@
         />
 
     <browser:page 
-        for="*"
+        for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-can-add-to-repository"
         class=".views.VersioningView"
         attribute="can_add_to_repository"
         permission="cmf.ModifyPortalContent" 
         />
 
-    <browser:page 
-        for="*"
+    <browser:page        
+        for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-can-checkout"
         class=".views.VersioningView"
         attribute="can_checkout"
         permission="cmf.ModifyPortalContent" 
         />
 
-    <browser:page 
-        for="*"
+    <browser:page         
+        for="Products.Archetypes.interfaces.IBaseObject"
         name="upfront.versioning-can-checkin"
         class=".views.VersioningView"
         attribute="can_checkin"
