@@ -151,6 +151,9 @@ class Versioner(object):
             # setId seems safe but if problems arise use manage_renameObject
             checkedin.setId(original.id)
 
+        # Set version as metadata
+        IVersionMetadata(checkedin).edit(version=int(version_id))
+
         notify(AfterObjectCheckinEvent(checkedin, original))
 
         return checkedin
@@ -166,24 +169,27 @@ class VersionMetadata(AttributeAnnotations):
         self.context = obj
 
     def initialize(self, item):        
-        """Copy annotation info from item if it is present to preserve chain, 
-        else fetch attributes from item."""
+        """Copy token metadata from item if it is present to preserve chain, 
+        else fetch token from item. All other atributes are fetched from 
+        item."""
+
+        wf = getToolByName(item, 'portal_workflow')
+        token = IVersionMetadata(item).token
 
         if not self.has_key(ANNOT_KEY):
             self[ANNOT_KEY] = PersistentDict()                
-
-        adapted = IVersionMetadata(item)
-        if adapted.has_key(ANNOT_KEY):
-            self[ANNOT_KEY] = adapted[ANNOT_KEY]
-        else:
-            wf = getToolByName(item, 'portal_workflow')
-            self[ANNOT_KEY].update(
-                dict(
-                    token=item.UID(),
-                    review_state=wf.getInfoFor(item, 'review_state'),
-                )
+        self[ANNOT_KEY].update(
+            dict(
+                token=token or item.UID(),
+                review_state=wf.getInfoFor(item, 'review_state'),
             )
-  
+        )
+ 
+    def edit(self, **kwargs):
+        if not self.has_key(ANNOT_KEY):
+            self[ANNOT_KEY] = PersistentDict()                
+        self[ANNOT_KEY].update(dict(**kwargs))
+
     def getPhysicalPath(self):
         return self.context.getPhysicalPath()
 
@@ -203,9 +209,7 @@ class VersionMetadata(AttributeAnnotations):
 
     @property
     def version(self):        
-        parent = self.context.aq_parent
-        try:
-            i = int(parent.id)
-            return i
-        except ValueError:
-            return None
+        if self.has_key(ANNOT_KEY):
+            return self[ANNOT_KEY].get('version', None)
+        return None
+

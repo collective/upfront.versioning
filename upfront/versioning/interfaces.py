@@ -44,6 +44,9 @@ class IVersionMetadata(IAnnotations):
     def initialize(item):
         """Set values obtained from item"""
 
+    def edit(**kwargs):
+        """Update values from kwargs"""
+
     def getPhysicalPath(self):
         """Compatibility method so adapted object can be catalogued"""
 

@@ -5,7 +5,8 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn, \
+    IVersionMetadata
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckin(VersioningTestCase):
@@ -63,6 +64,12 @@ class TestCheckin(VersioningTestCase):
 
         # But this marker interface must be set
         self.failUnless(ICheckedIn.providedBy(checkedin))
+
+        # Check metadata
+        adapted = IVersionMetadata(checkedin)
+        self.assertEquals(adapted.token, None)
+        self.assertEquals(adapted.state, 'checked_in')
+        self.assertEquals(adapted.version, 1)
 
         # Is checked in item in catalog? Token is not passed as parameter 
         # since this test is for a fresh checkin. This means there was no 

@@ -5,7 +5,8 @@ from zope.component import getUtility
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn, \
+    IVersionMetadata
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestCheckout(VersioningTestCase):
@@ -57,6 +58,12 @@ class TestCheckout(VersioningTestCase):
         self.assertEquals(len(roles), 2)
         self.failUnless('Manager' in roles)
         self.failUnless('Owner' in roles)
+
+        # Check metadata
+        adapted = IVersionMetadata(copy)
+        self.assertEquals(adapted.token, self.portal.repository.apple.UID())
+        self.assertEquals(adapted.state, 'checked_out')
+        self.assertEquals(adapted.version, None)
 
         # Is checked out item in catalog?
         vc = self.portal.upfront_versioning_catalog
