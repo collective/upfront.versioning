@@ -103,6 +103,7 @@ def onATObjectMovedEvent(ob, event):
         # A delete took place
         vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)
         if vc is not None:
-            vc.uncatalog_object(
-                '/'.join(event.oldParent.getPhysicalPath()) + '/' + event.oldName
-            )
+            pth = '/'.join(event.oldParent.getPhysicalPath()) \
+                + '/' +event.oldName
+            if vc.isCatalogued(pth):
+                vc.uncatalog_object(pth)
