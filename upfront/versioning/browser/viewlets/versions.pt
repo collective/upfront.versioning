@@ -1,20 +1,11 @@
-<table tal:condition="view/versions"
-       class="listing">
-    <tr>
-        <th>Item</th>
-        <th>State</th>
-        <th>Owner</th>
-        <th>Version</th>
-    </tr>
-    <tr tal:repeat="v view/versions">
-        <td>
-            <a tal:attributes="href v/url"
-               tal:omit-tag="not:v/url">
-                <span tal:replace="v/title" />
-            </a>
-        </td>
-        <td tal:content="v/state"></td>
-        <td tal:content="v/owner"></td>
-        <td tal:content="v/version"></td>
-    </tr>    
-</table>
+<div tal:condition="view/has_versions">
+    <span tal:replace="structure view/jquery" />
+    <dl id="upfront-versioning-versions-viewlet"
+        class="collapsible collapsedOnLoad"> 
+        <dt id="upfront-versioning-versions-viewlet-toggle"
+            class="collapsibleHeader"
+            i18n:translate="versions">Versions</dt>
+        <dd id="upfront-versioning-versions-viewlet-content"
+            class="collapsibleContent"></dd>            
+    </dl>
+</div>    

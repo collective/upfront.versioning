@@ -23,6 +23,44 @@ class VersionsViewlet(BrowserView):
         pass
 
     @memoize
+    def has_versions(self):
+        """Return true if context has versions, false otherwise"""
+        vc = getToolByName(self.context, 'upfront_versioning_catalog')
+        return len(vc.getVersionsOf(aq_inner(self.context))) > 0
+
+    def jquery(self):
+        """The viewlet is potentially slow so load content asynchronously"""
+        return '''
+        <script type="text/javascript">
+        jq(document).ready(
+        function()
+        {
+            jq('#upfront-versioning-versions-viewlet-toggle').click(
+                function()
+                {
+                    var elem = jq('#upfront-versioning-versions-viewlet-content');
+                    if (!elem.html())
+                    {
+                        jq.get(
+                            '%s/@@upfront.versioning-versions-inner', 
+                            function(data)
+                            {
+                                elem.html(data);
+                            }
+                        );
+                    }                        
+                }
+            );
+        }                
+        );</script>''' % self.context.absolute_url()
+
+    render = ViewPageTemplateFile("versions.pt")
+
+class VersionsView(BrowserView):
+    """A view that is intended to be loaded via ajax. It shows tabled 
+    version infomation for the context."""
+
+    @memoize
     def versions(self):
         """Return versions info as a list of dictionaries"""
         vc = getToolByName(self.context, 'upfront_versioning_catalog')
@@ -42,4 +80,9 @@ class VersionsViewlet(BrowserView):
             li.append(di)
         return li
 
-    render = ViewPageTemplateFile("versions.pt")
+    def checkedin_versions(self):
+        return [v for v in self.versions() if v['state'] == 'checked_in']
+
+    def checkedout_versions(self):
+        return [v for v in self.versions() if v['state'] == 'checked_out']
+

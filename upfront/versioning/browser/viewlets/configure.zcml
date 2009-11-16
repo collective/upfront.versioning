@@ -8,7 +8,7 @@
     <browser:viewlet
         for="upfront.versioning.interfaces.ICheckedOut"
         name="upfront.versioning-versions"
-        manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+        manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
         class=".versions.VersionsViewlet"
         permission="zope2.View"
         />
@@ -19,6 +19,22 @@
         manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
         class=".versions.VersionsViewlet"
         permission="zope2.View"
+        />
+
+    <browser:page 
+        for="upfront.versioning.interfaces.ICheckedOut"
+        name="upfront.versioning-versions-inner"
+        class=".versions.VersionsView"
+        template="versions_inner.pt"
+        permission="zope2.View" 
+        />
+
+    <browser:page 
+        for="upfront.versioning.interfaces.ICheckedIn"
+        name="upfront.versioning-versions-inner"
+        class=".versions.VersionsView"
+        template="versions_inner.pt"
+        permission="zope2.View" 
         />
 
 </configure>

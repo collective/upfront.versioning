@@ -1,0 +1,44 @@
+
+        <div tal:condition="view/checkedin_versions">
+        <label i18n:translate="checked_in">Checked in</label>
+        <table class="listing">
+            <tr>
+                <th i18n:translate="item">Item</th>
+                <th i18n:translate="owner">Owner</th>
+                <th i18n:translate="version">Version</th>
+            </tr>
+            <tr tal:repeat="v view/checkedin_versions"
+                tal:attributes="class python:repeat['v'].odd() and 'even' or 'odd'">
+                <td>
+                    <a tal:attributes="href v/url"
+                       tal:omit-tag="not:v/url">
+                        <span tal:replace="v/title" />
+                    </a>
+                </td>
+                <td tal:content="v/owner"></td>
+                <td tal:content="v/version"></td>
+            </tr>    
+        </table>
+        </div>
+
+        <div tal:condition="view/checkedout_versions">
+        <label i18n:translate="checked_out">Checked out</label>
+        <table class="listing">
+            <tr>
+                <th i18n:translate="item">Item</th>
+                <th i18n:translate="owner">Owner</th>
+                <th i18n:translate="base_version">Base version</th>
+            </tr>
+            <tr tal:repeat="v view/checkedout_versions"
+                tal:attributes="class python:repeat['v'].odd() and 'even' or 'odd'">
+                <td>
+                    <a tal:attributes="href v/url"
+                       tal:omit-tag="not:v/url">
+                        <span tal:replace="v/title" />
+                    </a>
+                </td>
+                <td tal:content="v/owner"></td>
+                <td tal:content="v/version"></td>
+            </tr>    
+        </table>
+        </div>
