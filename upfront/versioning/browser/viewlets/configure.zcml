@@ -16,7 +16,7 @@
     <browser:viewlet
         for="upfront.versioning.interfaces.ICheckedIn"
         name="upfront.versioning-versions"
-        manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+        manager="plone.app.layout.viewlets.interfaces.IBelowContentBody"
         class=".versions.VersionsViewlet"
         permission="zope2.View"
         />
