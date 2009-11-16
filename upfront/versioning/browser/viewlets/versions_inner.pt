@@ -5,6 +5,7 @@
             <tr>
                 <th i18n:translate="item">Item</th>
                 <th i18n:translate="owner">Owner</th>
+                <th i18n:translate="date">Date</th>
                 <th i18n:translate="version">Version</th>
             </tr>
             <tr tal:repeat="v view/checkedin_versions"
@@ -14,8 +15,9 @@
                        tal:omit-tag="not:v/url">
                         <span tal:replace="v/title" />
                     </a>
-                </td>
+                </td>                
                 <td tal:content="v/owner"></td>
+                <td tal:content="python:v['date'].strftime('%d %B %Y %H:%M')"></td>
                 <td tal:content="v/version"></td>
             </tr>    
         </table>
@@ -27,6 +29,7 @@
             <tr>
                 <th i18n:translate="item">Item</th>
                 <th i18n:translate="owner">Owner</th>
+                <th i18n:translate="date">Date</th>
                 <th i18n:translate="base_version">Base version</th>
             </tr>
             <tr tal:repeat="v view/checkedout_versions"
@@ -38,6 +41,7 @@
                     </a>
                 </td>
                 <td tal:content="v/owner"></td>
+                <td tal:content="python:v['date'].strftime('%d %B %Y %H:%M')"></td>
                 <td tal:content="v/version"></td>
             </tr>    
         </table>

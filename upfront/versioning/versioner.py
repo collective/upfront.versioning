@@ -1,4 +1,5 @@
 from string import zfill
+from DateTime import DateTime
 
 from persistent.dict import PersistentDict
 from Acquisition import aq_base
@@ -231,8 +232,11 @@ class Versioner(object):
             # setId seems safe but if problems arise use manage_renameObject
             checkedin.setId(original.id)
 
-        # Set version as metadata
-        IVersionMetadata(checkedin).edit(version=int(version_id))
+        # Set version and date as metadata
+        IVersionMetadata(checkedin).edit(
+            version=int(version_id),
+            date=DateTime()
+        )
 
         notify(AfterObjectCheckinEvent(checkedin, original))
 
@@ -278,6 +282,7 @@ class VersionMetadata(AttributeAnnotations):
             dict(
                 token=token or item.UID(),
                 review_state=wf.getInfoFor(item, 'review_state'),
+                date=DateTime(),
             )
         )
  
@@ -307,6 +312,12 @@ class VersionMetadata(AttributeAnnotations):
     def version(self):        
         if self.has_key(ANNOT_KEY):
             return self[ANNOT_KEY].get('version', None)
+        return None
+
+    @property
+    def date(self):        
+        if self.has_key(ANNOT_KEY):
+            return self[ANNOT_KEY].get('date', None)
         return None
 
     def remove(self):

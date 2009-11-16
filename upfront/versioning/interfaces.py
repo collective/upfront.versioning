@@ -75,7 +75,10 @@ class IVersionMetadata(IAnnotations):
         'checked_in' if context implements ICheckedIn."""
 
     def version():
-        """Return version info from parent id if possible, None otherwise"""
+        """Return version info if possible, None otherwise"""
+
+    def date():
+        """Return date info if possible, None otherwise"""
 
     def remove():
         """Remove the IVersionMetadata annotation"""

@@ -41,6 +41,7 @@ class VersionsViewlet(BrowserView):
                     var elem = jq('#upfront-versioning-versions-viewlet-content');
                     if (!elem.html())
                     {
+                        elem.html('Loading...');
                         jq.get(
                             '%s/@@upfront.versioning-versions-inner', 
                             function(data)
@@ -74,10 +75,19 @@ class VersionsView(BrowserView):
                 state=adapted.state,
                 owner=ob.getOwner(),
                 version=adapted.version,
+                date=adapted.date,
                 url=member.has_permission(View, ob) and brain.getURL() or None,
                 title=ob.title,
             )    
             li.append(di)
+
+        # Sort on date, version
+        def mysort(a, b):
+            if a['date'] == b['date']:
+                return cmp(a['version'], b['version'])
+            return cmp(a['date'], b['date'])
+        li.sort(mysort)            
+
         return li
 
     def checkedin_versions(self):

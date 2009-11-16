@@ -45,7 +45,13 @@ def afterATObjectCheckoutEvent(ob, event):
     unwrapped = aq_base(ob)
     if hasattr(unwrapped, 'workflow_history'):
         unwrapped.workflow_history = {}
-   
+    
+    # Make sure it is not expired
+    portal = getToolByName(ob, 'portal_url').getPortalObject()
+    if portal.isExpired(ob):
+        ob.setExpirationDate(None)
+        ob.reindexObject()
+
     # Catalog checked out original and item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
     vc.catalog_object(event.original, skip_interface_check=True)    
