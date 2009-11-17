@@ -6,16 +6,22 @@ from catalog import VersioningCatalog
 import logging
 logger = logging.getLogger('upfront.versioning')
 
+def isNotUpfrontVersioningProfile(context):
+    return context.readDataFile("upfrontversioning_marker.txt") is None
+
 def postInstall(context):
+    if isNotUpfrontVersioningProfile(context): return 
+
     site = context.getSite()
+
+    #if 'VersionFolder' not in site.portal_types.objectIds():
+    #    return
 
     # Create repository
     if 'repository' not in site.objectIds():
         folder = _createObjectByType(
-            'Large Plone Folder', site, 'repository', title='Repository'
+            'VersionFolder', site, 'repository', title='Repository'
         )
-        # Publish it
-        site.portal_workflow.doActionFor(folder, 'publish')
 
     # Create catalog
     id = 'upfront_versioning_catalog'

@@ -236,7 +236,7 @@ class Versioner(object):
         pt_id = getUtility(IURLNormalizer).normalize(item.portal_type)
         if pt_id not in repository.objectIds():
             pt_folder = _createObjectByType(
-                'Large Plone Folder', repository, pt_id, title=item.portal_type
+                'VersionFolder', repository, pt_id, title=item.portal_type
             )
             fti = portal.portal_types.getTypeInfo('Large Plone Folder')
             fti._finishConstruction(pt_folder)
@@ -259,7 +259,7 @@ class Versioner(object):
         # Create a folder for the new version
         version_id = zfill(latest_version, 8)
         folder = _createObjectByType(
-                'Folder', pt_folder, version_id, title=version_id
+                'VersionFolder', pt_folder, version_id, title=version_id
         )
         fti = portal.portal_types.getTypeInfo('Folder')
         fti._finishConstruction(folder)
