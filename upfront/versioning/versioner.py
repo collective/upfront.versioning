@@ -68,6 +68,20 @@ def check_children(func):
         return func(self, item)
     return new
 
+def check_homefolder(func):
+    """Return False if member has no home folder, else execute func and return
+    its value."""
+    def new(self, item):
+        pms = getToolByName(item, 'portal_membership')
+        if pms.isAnonymousUser():
+            return False
+        member = pms.getAuthenticatedMember()
+        home = member.getHomeFolder()
+        if home is None:
+            return False
+        return func(self, item)
+    return new
+
 class Versioner(object):
     """Provide versioning methods"""
 
@@ -87,6 +101,7 @@ class Versioner(object):
 
     @requireView
     @check_types
+    @check_homefolder
     def can_derive_copy(self, item):
         parent = item
         while parent is not None:
@@ -107,6 +122,7 @@ class Versioner(object):
 
     @requireModifyPortalContent
     @check_types
+    @check_homefolder
     def can_checkout(self, item):
         if not ICheckedIn.providedBy(item):
             return False
