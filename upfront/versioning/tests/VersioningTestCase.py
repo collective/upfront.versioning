@@ -10,6 +10,7 @@ from Products.PloneTestCase.setup import _createHomeFolder
 
 from upfront.versioning.interfaces import IVersioner
 
+PloneTestCase.installProduct('upfront.versioning')
 setupPloneSite(extension_profiles=['upfront.versioning:default'])
 
 class VersioningTestCase(PloneTestCase.PloneTestCase):
