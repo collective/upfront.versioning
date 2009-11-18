@@ -1,14 +1,25 @@
+import unittest
+
+from Testing import ZopeTestCase as ztc 
+
+from Products.Five import zcml
+from Products.PloneTestCase import PloneTestCase as ptc 
+from Products.PloneTestCase.layer import onsetup
+
+
+
 import transaction
 from zope import event
 from zope.component import getUtility
-from Testing import ZopeTestCase
+
+#from Testing import ZopeTestCase
 
 from Products.Five import zcml
 from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFPlone.tests import PloneTestCase
-from Products.PloneTestCase.ptc import setupPloneSite
+#from Products.CMFPlone.tests import PloneTestCase
+#from Products.PloneTestCase.ptc import setupPloneSite
 from Products.PloneTestCase.setup import _createHomeFolder
-from Products.PloneTestCase.layer import onsetup
+#from Products.PloneTestCase.layer import onsetup
 
 import upfront.versioning
 from upfront.versioning.interfaces import IVersioner
@@ -19,14 +30,12 @@ def setup_product():
     zcml.load_config('overrides.zcml', upfront.versioning)
 
 setup_product()
+ptc.setupPloneSite(extension_profiles=['upfront.versioning:default'])
 
-#PloneTestCase.installProduct('upfront.versioning')
-setupPloneSite(extension_profiles=['upfront.versioning:default'])
-
-class VersioningTestCase(PloneTestCase.PloneTestCase):
+class VersioningTestCase(ptc.PloneTestCase):
     
     def afterSetUp(self):
-        PloneTestCase.PloneTestCase.afterSetUp(self)
+        ptc.PloneTestCase.afterSetUp(self)
         utility = getUtility(IVersioner)
         fti = self.portal.portal_types.getTypeInfo('Document')
 
