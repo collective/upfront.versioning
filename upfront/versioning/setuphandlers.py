@@ -14,9 +14,6 @@ def postInstall(context):
 
     site = context.getSite()
 
-    #if 'VersionFolder' not in site.portal_types.objectIds():
-    #    return
-
     # Create repository
     if 'repository' not in site.objectIds():
         folder = _createObjectByType(

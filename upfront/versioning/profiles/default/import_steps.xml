@@ -6,7 +6,7 @@
         handler="upfront.versioning.setuphandlers.postInstall"
         title="Post Install"
         version="2009-08-25">
-      <dependency step="typeinfo"/>
+      <dependency step="plone-final"/>
       Post Install for upfront.versioning
     </import-step>
 

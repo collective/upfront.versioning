@@ -3,14 +3,24 @@ from zope import event
 from zope.component import getUtility
 from Testing import ZopeTestCase
 
+from Products.Five import zcml
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.tests import PloneTestCase
 from Products.PloneTestCase.ptc import setupPloneSite
 from Products.PloneTestCase.setup import _createHomeFolder
+from Products.PloneTestCase.layer import onsetup
 
+import upfront.versioning
 from upfront.versioning.interfaces import IVersioner
 
-PloneTestCase.installProduct('upfront.versioning')
+@onsetup
+def setup_product():
+    zcml.load_config('configure.zcml', upfront.versioning)
+    zcml.load_config('overrides.zcml', upfront.versioning)
+
+setup_product()
+
+#PloneTestCase.installProduct('upfront.versioning')
 setupPloneSite(extension_profiles=['upfront.versioning:default'])
 
 class VersioningTestCase(PloneTestCase.PloneTestCase):
