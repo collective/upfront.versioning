@@ -11,18 +11,19 @@ from Products.PloneTestCase.layer import onsetup
 import upfront.versioning
 from upfront.versioning.interfaces import IVersioner
 
-@onsetup
-def setup_product():
-    zcml.load_config('configure.zcml', upfront.versioning)
-    zcml.load_config('overrides.zcml', upfront.versioning)
-
-setup_product()
-ptc.setupPloneSite(extension_profiles=['upfront.versioning:default'])
+ptc.setupPloneSite()
 
 class VersioningTestCase(ptc.PloneTestCase):
     
     def afterSetUp(self):
         ptc.PloneTestCase.afterSetUp(self)
+
+        # I am ready to kill... from Zope 2.10.4 I have to do this here
+        from OFS.Application import install_package
+        app = ztc.app()
+        install_package(app, upfront.versioning, upfront.versioning.initialize)
+        self.addProfile('upfront.versioning:default')
+
         utility = getUtility(IVersioner)
         fti = self.portal.portal_types.getTypeInfo('Document')
 

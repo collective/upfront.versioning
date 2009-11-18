@@ -15,7 +15,7 @@
     <genericsetup:registerProfile
         name="default"
         title="Upfront Versioning"
-        description=""
+        description="x"
         directory="profiles/default"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
