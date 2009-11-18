@@ -189,6 +189,23 @@ class Versioner(object):
         res = workspace.manage_pasteObjects(cp)
         copy = workspace._getOb(res[0]['new_id'])
 
+        # The copy will be in its initial review state. Change it to be 
+        # the same as the item which it was copied from.
+        # todo: recurse
+        '''
+        wf = getToolByName(item, 'portal_workflow')
+        wfs = {}
+        for wf_id in wf.getChainFor(copy):
+            item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
+            copy_review_state = wf.getInfoFor(copy, 'review_state', wf_id=wf_id)
+            if copy_review_state != item_review_state:            
+                wf.setStatusOf(wf_id, copy, item_review_state)
+                wfs[wf_id] = wf.getWorkflowById(wf_id)
+                #copy.reindexObject()
+        if wfs:
+            wf._recursiveUpdateRoleMappings(copy, wfs)
+        '''
+
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
 
