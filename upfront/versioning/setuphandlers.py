@@ -1,3 +1,5 @@
+from zope.app.component.interfaces import ISite
+
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 
@@ -11,7 +13,6 @@ def isNotUpfrontVersioningProfile(context):
 
 def postInstall(context):
     if isNotUpfrontVersioningProfile(context): return 
-
     site = context.getSite()
 
     # Create repository

@@ -1,25 +1,12 @@
-import unittest
-
+import transaction, unittest
+from zope.component import getUtility
 from Testing import ZopeTestCase as ztc 
 
 from Products.Five import zcml
+from Products.CMFPlone.utils import _createObjectByType
+from Products.PloneTestCase.setup import _createHomeFolder
 from Products.PloneTestCase import PloneTestCase as ptc 
 from Products.PloneTestCase.layer import onsetup
-
-
-
-import transaction
-from zope import event
-from zope.component import getUtility
-
-#from Testing import ZopeTestCase
-
-from Products.Five import zcml
-from Products.CMFPlone.utils import _createObjectByType
-#from Products.CMFPlone.tests import PloneTestCase
-#from Products.PloneTestCase.ptc import setupPloneSite
-from Products.PloneTestCase.setup import _createHomeFolder
-#from Products.PloneTestCase.layer import onsetup
 
 import upfront.versioning
 from upfront.versioning.interfaces import IVersioner
