@@ -232,6 +232,9 @@ class Versioner(object):
         for dontcare, child in copy.ZopeFind(copy, search_sub=1):
             modifyRolesForPermission(child, 'View', ('Manager','Owner'))
 
+        # Reindex to update catalog
+        copy.reindexObject()
+
         notify(AfterObjectCheckoutEvent(copy, item))
 
         return copy
