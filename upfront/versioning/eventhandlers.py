@@ -58,11 +58,21 @@ def beforeATObjectCheckinEvent(ob, event):
     vc.uncatalog_object('/'.join(ob.getPhysicalPath()))
 
 def afterATObjectCheckinEvent(ob, event):
-    # Remove CMFEditions history    
-    tool = getToolByName(ob, 'portal_repository', None)
-    if tool is not None:
-        for h in tool.getHistory(ob):
-            tool.purge(ob, h.version_id)
+    # There seems to be no point in attempting to remove CMFEditions history 
+    # anymore. It is way too difficult in any case.
+    '''
+    # Remove CMFEditions history. Unfortunately its API is obscure hence all
+    # this strange code.
+    repository = getToolByName(ob, 'portal_repository', None)
+    archivist = getToolByName(ob, 'portal_archivist', None)
+    if repository is not None:
+        metadata = { 
+                'app_metadata': {},
+                'sys_metadata': repository._prepareSysMetadata(''),
+        }
+        for h in repository.getHistory(ob):
+            archivist.purge(ob, selector=h.version_id, metadata=metadata)
+    '''
 
     # Catalog checked in item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
