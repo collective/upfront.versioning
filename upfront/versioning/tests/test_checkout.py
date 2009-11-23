@@ -67,6 +67,9 @@ class TestCheckout(VersioningTestCase):
         )
         self.failUnless(brains)      
 
+        # Is it expired?
+        self.failUnless(self.portal.isExpired(copy))
+
     def test_already_checkedout(self):
         """Item is already checked out. Check it out again."""
         utility = getUtility(IVersioner)      

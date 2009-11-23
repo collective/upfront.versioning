@@ -41,10 +41,11 @@ def beforeATObjectCheckoutEvent(ob, event):
         getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
 
 def afterATObjectCheckoutEvent(ob, event):   
-    # Make sure it is not expired
+    # Expire checked out item
     portal = getToolByName(ob, 'portal_url').getPortalObject()
-    if portal.isExpired(ob):
-        ob.setExpirationDate(None)
+    if not portal.isExpired(ob):
+        expires = DateTime() - 1/1440.0
+        ob.setExpirationDate(expires)
         ob.reindexObject()
 
     # Catalog checked out item and original
@@ -74,14 +75,20 @@ def afterATObjectCheckinEvent(ob, event):
             archivist.purge(ob, selector=h.version_id, metadata=metadata)
     '''
 
+    portal = getToolByName(ob, 'portal_url').getPortalObject()
+
     # Catalog checked in item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
     vc.catalog_object(ob)
 
+    # Un-expire current version
+    if portal.isExpired(ob):
+        ob.setExpirationDate(None)
+        ob.reindexObject()
+
     # Expire all other versions of this item. Doing so prevents 
     # portal_catalog from returning older versions unless it is 
     # specifically instructed to do so.
-    portal = getToolByName(ob, 'portal_url').getPortalObject()
     expires = DateTime() - 1/1440.0
     for brain in vc.getVersionsOf(ob):
         o = brain.getObject()

@@ -40,6 +40,9 @@ class TestCheckin(VersioningTestCase):
         # Parent folder of checkedin must have id 00000003
         self.assertEquals(checkedin.aq_parent.id, '00000003')
 
+        # Is it not expired?
+        self.failIf(self.portal.isExpired(checkedin))
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 
