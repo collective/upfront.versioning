@@ -55,14 +55,20 @@ class VersioningTestCase(ptc.PloneTestCase):
         workspace = utility.getWorkspace(self.portal)
 
         # Create documents in workspace as member
-        for id, transition in (
-            ('repo-member', None),
-            ):
+        created = []
+        for id in ('repo-member',):
             ob = _createObjectByType('Document', workspace, id)
             fti._finishConstruction(ob)
-            if transition is not None:
-                self.portal.portal_workflow.doActionFor(ob, transition)
+            created.append(ob)
+
+        # Portal owner must publish the item before it can be added to the repo
+        self.loginAsPortalOwner()
+        for ob in created:
+            self.portal.portal_workflow.doActionFor(ob, transition)
+
         transaction.savepoint(optimistic=True)
 
-        # Add repo-member to repo while logged in as member
-        utility.add_to_repository(workspace['repo-member'])
+        # Add items to repo while logged in as member
+        self.login('member')
+        for ob in created:
+            utility.add_to_repository(ob)
