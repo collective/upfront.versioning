@@ -21,6 +21,10 @@ class TestAddToRepository(VersioningTestCase):
         fti = self.portal.portal_types.getTypeInfo('Document')
         fti._finishConstruction(orange)
 
+        # Edit orange so CMFEditions can create history
+        # todo: does not work correctly yet
+        orange.edit(title='Orange')
+
         # Portal owner publishes orange
         self.loginAsPortalOwner()
         self.portal.portal_workflow.doActionFor(orange, 'publish')
