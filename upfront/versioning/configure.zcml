@@ -73,6 +73,9 @@
         handler=".eventhandlers.afterATObjectDeriveEvent"
         /> 
 
+    <!-- Suppress deprecation warnings -->
+    <five:deprecatedManageAddDelete class=".content.versionfolder.VersionFolder" />
+
     <include package=".browser" />
 
 </configure>

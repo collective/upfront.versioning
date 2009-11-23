@@ -209,25 +209,25 @@ class Versioner(object):
 
         # The copy will be in its initial review state. Change it to be 
         # the same as the item which it was copied from.
-        # todo: recurse
-        wf = getToolByName(item, 'portal_workflow')
-        wfs = {}
-        for wf_id in wf.getChainFor(copy):
-            item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
-            copy_review_state = wf.getInfoFor(copy, 'review_state', wf_id=wf_id)
-            if copy_review_state != item_review_state:            
-                status = {
-                    'action': None, 
-                    'review_state': item_review_state, 
-                    'actor': None, 
-                    'comments': '', 
-                    'time': DateTime()
-                }
-                wf.setStatusOf(wf_id, copy, status)
-                wfs[wf_id] = wf.getWorkflowById(wf_id)
+        for dontcare, child in [(copy.id, copy)] + copy.ZopeFind(copy, search_sub=1):
+            wf = getToolByName(item, 'portal_workflow')
+            wfs = {}
+            for wf_id in wf.getChainFor(child):
+                item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
+                child_review_state = wf.getInfoFor(child, 'review_state', wf_id=wf_id)
+                if child_review_state != item_review_state:            
+                    status = {
+                        'action': None, 
+                        'review_state': item_review_state, 
+                        'actor': None, 
+                        'comments': '', 
+                        'time': DateTime()
+                    }
+                    wf.setStatusOf(wf_id, child, status)
+                    wfs[wf_id] = wf.getWorkflowById(wf_id)
 
-        if wfs:
-            wf._recursiveUpdateRoleMappings(copy, wfs)
+            if wfs:
+                wf._recursiveUpdateRoleMappings(child, wfs)
 
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
