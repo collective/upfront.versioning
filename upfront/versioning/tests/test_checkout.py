@@ -110,6 +110,15 @@ class TestCheckout(VersioningTestCase):
         brains = self.portal.upfront_versioning_catalog(path=new_copy_path)
         self.failUnless(brains)
 
+    def test_checkout_nested(self):
+        """Checkout a folderish item that contains another item"""
+        utility = getUtility(IVersioner)
+        copy = utility.checkout(self.portal.repository.folder['00000001']['folder-containing-item'])
+
+        # Is contained item published?
+        wf = self.portal.portal_workflow
+        self.assertEquals(wf.getInfoFor(copy.contained, 'review_state'), 'published')
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

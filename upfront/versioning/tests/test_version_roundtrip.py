@@ -13,12 +13,7 @@ class TestVersionRoundtrip(VersioningTestCase):
 
     def afterSetUp(self):
         VersioningTestCase.afterSetUp(self) 
-
-        # Hack persistent utility since we need Folder to be versionable
-        sm = self.portal.getSiteManager()
-        utility = sm.getUtility(IVersioningSettings, 'upfront.versioning-settings')
-        utility.versionable_types = ['Document', 'Folder']
-               
+                     
         utility = getUtility(IVersioner)
         workspace = utility.getWorkspace(self.portal)
 
@@ -41,7 +36,7 @@ class TestVersionRoundtrip(VersioningTestCase):
 
         # Checkout items
         copy = utility.checkout(self.portal.repository.document['00000002']['repo-member'])
-        copy_collide = utility.checkout(self.portal.repository.folder['00000001']['repo-member'])
+        copy_collide = utility.checkout(self.portal.repository.folder['00000002']['repo-member'])
 
         transaction.savepoint(optimistic=True)
 
