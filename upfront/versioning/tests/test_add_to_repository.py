@@ -20,6 +20,13 @@ class TestAddToRepository(VersioningTestCase):
         orange = _createObjectByType('Document', workspace, 'orange')
         fti = self.portal.portal_types.getTypeInfo('Document')
         fti._finishConstruction(orange)
+
+        # Portal owner publishes orange
+        self.loginAsPortalOwner()
+        self.portal.portal_workflow.doActionFor(orange, 'publish')
+
+        self.login('member')
+
         transaction.savepoint(optimistic=True)
 
     def test_can_add_to_repository(self):

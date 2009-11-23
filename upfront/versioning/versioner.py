@@ -3,6 +3,7 @@ from DateTime import DateTime
 
 from persistent.dict import PersistentDict
 from Acquisition import aq_base
+from AccessControl.PermissionRole import rolesForPermissionOn
 
 from zope.interface import implements, alsoProvides, noLongerProvides
 from zope.component import adapts, getUtility
@@ -113,6 +114,10 @@ class Versioner(object):
     @requireModifyPortalContent
     @check_types
     def can_add_to_repository(self, item):
+        roles = rolesForPermissionOn(View, item)
+        if 'Anonymous' not in roles:
+            return False
+
         parent = item
         while parent is not None:
             if ICheckedOut.providedBy(parent) or ICheckedIn.providedBy(parent):
@@ -188,7 +193,34 @@ class Versioner(object):
         cp = item.aq_parent.manage_copyObjects([item.id])
         res = workspace.manage_pasteObjects(cp)
         copy = workspace._getOb(res[0]['new_id'])
-        
+
+        # Remove workflow history
+        unwrapped = aq_base(copy)
+        if hasattr(unwrapped, 'workflow_history'):
+            delattr(unwrapped, 'workflow_history')
+
+        # The copy will be in its initial review state. Change it to be 
+        # the same as the item which it was copied from.
+        # todo: recurse
+        wf = getToolByName(item, 'portal_workflow')
+        wfs = {}
+        for wf_id in wf.getChainFor(copy):
+            item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
+            copy_review_state = wf.getInfoFor(copy, 'review_state', wf_id=wf_id)
+            if copy_review_state != item_review_state:            
+                status = {
+                    'action': None, 
+                    'review_state': item_review_state, 
+                    'actor': None, 
+                    'comments': '', 
+                    'time': DateTime()
+                }
+                wf.setStatusOf(wf_id, copy, status)
+                wfs[wf_id] = wf.getWorkflowById(wf_id)
+
+        if wfs:
+            wf._recursiveUpdateRoleMappings(copy, wfs)
+
         # Initialize IVersionMetadata
         IVersionMetadata(copy).initialize(item)
 

@@ -9,27 +9,23 @@ class IVersioner(Interface):
         """If the authenticated member does not have a workspace then create 
         one. Return the workspace.
         
-        A context is needed to be able to find the membership tool.
-        """
+        A context is needed to be able to find the membership tool."""
 
     def can_derive_copy(item):
         """Return true if item and none of its parents provide ICheckedOut, 
-        false otherwise.
-         
-        todo: how to prevent deriving the Plone site?"""
+        false otherwise."""         
 
     def can_add_to_repository(item):
-        """Return true if item and none of its parents provide either 
-        ICheckedOut or ICheckedIn, false otherwise.
+        """Return true if (1) item and none of its parents provide either 
+        ICheckedOut or ICheckedIn and (2) item is anonymously viewable, false
+        otherwise."""
          
-        todo: how to prevent checking in the Plone site?"""
-
     def can_checkout(item):
         """Return true if ICheckedIn interface is provided by item and 
         ICheckedOut not by any parent, false otherwise."""
 
     def can_checkin(item):
-        """Return true if ICheckedOut interface is provided by item and not 
+        """Return true if (1) ICheckedOut interface is provided by item and not 
         by any parent, false otherwise."""
 
     def derive_copy(item):
@@ -38,13 +34,11 @@ class IVersioner(Interface):
 
     def checkout(item):
         """Checkout item to authenticated member's workspace. Returns
-        checked out item.
-        """
+        checked out item."""
 
     def checkin(item):
         """Checkin item from authenticated member's workspace to 
-        repository. Return checked in item.
-        """
+        repository. Return checked in item."""
 
 class ICheckedOut(Interface):
     """Marker interface applied to an object on checkout"""
@@ -67,8 +61,7 @@ class IVersionMetadata(IAnnotations):
     def token():
         """Return an identifier that can be used to find the original item.
         The word 'token' is used since UID is Archetypes specific and we want 
-        to be agnostic.
-        """
+        to be agnostic."""
 
     def state():
         """Return 'checked_out' if context implements ICheckedOut or return 

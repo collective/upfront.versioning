@@ -27,6 +27,13 @@ class TestVersionRoundtrip(VersioningTestCase):
         ob = _createObjectByType('Folder', workspace, 'repo-member')
         fti = self.portal.portal_types.getTypeInfo('Folder')
         fti._finishConstruction(ob)
+
+        # Portal owner publishes ob
+        self.loginAsPortalOwner()
+        self.portal.portal_workflow.doActionFor(ob, 'publish')
+
+        self.login('member')
+
         transaction.savepoint(optimistic=True)
 
         # Add folder to repository

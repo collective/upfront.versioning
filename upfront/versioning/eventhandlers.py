@@ -40,36 +40,7 @@ def beforeATObjectCheckoutEvent(ob, event):
         logger.warn(msg)
         getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
 
-def afterATObjectCheckoutEvent(ob, event):
-    copy = ob
-    item = event.original
-    # Remove workflow history
-    unwrapped = aq_base(copy)
-    if hasattr(unwrapped, 'workflow_history'):
-        delattr(unwrapped, 'workflow_history')
-
-    # The copy will be in its initial review state. Change it to be 
-    # the same as the item which it was copied from.
-    # todo: recurse
-    wf = getToolByName(item, 'portal_workflow')
-    wfs = {}
-    for wf_id in wf.getChainFor(copy):
-        item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
-        copy_review_state = wf.getInfoFor(copy, 'review_state', wf_id=wf_id)
-        if copy_review_state != item_review_state:            
-            status = {
-                'action': None, 
-                'review_state': item_review_state, 
-                'actor': None, 
-                'comments': '', 
-                'time': DateTime()
-            }
-            wf.setStatusOf(wf_id, copy, status)
-            wfs[wf_id] = wf.getWorkflowById(wf_id)
-
-    if wfs:
-        wf._recursiveUpdateRoleMappings(copy, wfs)
-
+def afterATObjectCheckoutEvent(ob, event):   
     # Make sure it is not expired
     portal = getToolByName(ob, 'portal_url').getPortalObject()
     if portal.isExpired(ob):
