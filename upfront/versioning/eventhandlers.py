@@ -28,17 +28,19 @@ def beforeATObjectCheckoutEvent(ob, event):
     if problems:                
         # todo: figure out why mapping replacement does not work
         msg = _(
-            u"Reference ${plurality} ${fields} will not keep its value after the item is checked out",
+            u"Reference ${plurality} ${fields} will not keep its value",
             mapping={
                 'plurality':(len(problems) > 1) and 'fields' or 'field',
                 'fields': ', '.join([f.getName() for f in problems])
             }
         )
-        msg = u"Reference %s %s will not keep its value after the item is checked out" \
+        msg = u"Reference %s %s will not keep its value" \
             % ((len(problems) > 1) and 'fields' or 'field', ', '.join([f.getName() for f in problems]))
         logger = logging.getLogger('upfront.versioning')
         logger.warn(msg)
         getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
+
+beforeATObjectDeriveEvent = beforeATObjectCheckoutEvent
 
 def afterATObjectCheckoutEvent(ob, event):   
     # Expire checked out item
@@ -56,7 +58,9 @@ def afterATObjectCheckoutEvent(ob, event):
 def beforeATObjectCheckinEvent(ob, event):
     # Uncatalog checked out item
     vc = getToolByName(ob, 'upfront_versioning_catalog')
-    vc.uncatalog_object('/'.join(ob.getPhysicalPath()))
+    pth = '/'.join(ob.getPhysicalPath())
+    if vc.isCatalogued(pth):
+        vc.uncatalog_object(pth)
 
 def afterATObjectCheckinEvent(ob, event):
     # There seems to be no point in attempting to remove CMFEditions history 

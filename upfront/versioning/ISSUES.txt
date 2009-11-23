@@ -1,3 +1,4 @@
 2. Hide version folder from navigation.
 3. Action icons
 4. Recursively fix workflow state on checkout
+5. Member is not presented with menu to derive copy on published page in root.

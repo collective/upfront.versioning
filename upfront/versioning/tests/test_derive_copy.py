@@ -40,6 +40,9 @@ class TestDeriveCopy(VersioningTestCase):
         # Is it there?
         self.failUnless(copy in workspace.objectValues())
 
+        # IVersionMetadata annotation must be present
+        self.failUnless(IVersionMetadata(copy).has_key(ANNOT_KEY))
+
     def test_derive_from_repo(self):
         """Derive an item that is in the repository"""
         utility = getUtility(IVersioner)
@@ -48,11 +51,8 @@ class TestDeriveCopy(VersioningTestCase):
         # Marker interface must be gone
         self.failIf(ICheckedIn.providedBy(copy))
 
-        # IVersionMetadata annotation must be gone
-        self.failIf(IVersionMetadata(copy).has_key(ANNOT_KEY))
-
     def test_crazy_derive(self):
-        """Checkout the entire Plone site"""
+        """Derive the entire Plone site"""
         utility = getUtility(IVersioner)
         self.assertRaises(RuntimeError, utility.derive_copy, self.portal)
 

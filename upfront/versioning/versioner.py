@@ -19,7 +19,8 @@ from plone.i18n.normalizer.interfaces import IURLNormalizer
 
 from interfaces import IVersioner, IVersionMetadata, ICheckedOut, ICheckedIn, \
     IVersioningSettings
-from events import BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
+from events import BeforeObjectDeriveEvent, AfterObjectDeriveEvent, \
+    BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
 ANNOT_KEY = 'IVersionMetadata'
@@ -161,6 +162,8 @@ class Versioner(object):
 
         workspace = self.getWorkspace(item)
 
+        notify(BeforeObjectDeriveEvent(item))
+
         # Copy the item
         cp = item.aq_parent.manage_copyObjects([item.id])
         res = workspace.manage_pasteObjects(cp)
@@ -172,6 +175,11 @@ class Versioner(object):
 
         # Remove IVersionMetadata annotation if it exists
         IVersionMetadata(copy).remove()
+
+        # Initialize IVersionMetadata
+        IVersionMetadata(copy).initialize(item)
+
+        notify(AfterObjectDeriveEvent(copy, item))
 
         return copy
 

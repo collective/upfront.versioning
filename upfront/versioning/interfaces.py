@@ -79,6 +79,12 @@ class IVersionMetadata(IAnnotations):
 class IVersioningEvent(IObjectEvent):
     """Base class for versioning events"""
 
+class IBeforeObjectDeriveEvent(IVersioningEvent):
+    pass
+
+class IAfterObjectDeriveEvent(IVersioningEvent):
+    original = Attribute(u"The object that was originally cloned to create the copy")
+
 class IBeforeObjectCheckoutEvent(IVersioningEvent):
     pass
 
