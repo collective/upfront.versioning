@@ -22,8 +22,9 @@ class TestAddToRepository(VersioningTestCase):
         fti._finishConstruction(orange)
 
         # Edit orange so CMFEditions can create history
-        # todo: does not work correctly yet
         orange.edit(title='Orange')
+        if hasattr(orange, 'update_version_on_edit'):
+            orange.update_version_on_edit()
 
         # Portal owner publishes orange
         self.loginAsPortalOwner()
