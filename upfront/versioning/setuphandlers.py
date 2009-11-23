@@ -2,6 +2,7 @@ from zope.app.component.interfaces import ISite
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from plone.app.controlpanel.search import SearchControlPanelAdapter
 
 from catalog import VersioningCatalog
 
@@ -29,3 +30,11 @@ def postInstall(context):
         c.title = 'Upfront Versioning Catalog'
         site._setObject(id, c)
     catalog = site._getOb(id) 
+
+    # Exclude VersionFolder from search. The API seems upside down.
+    adapter = SearchControlPanelAdapter(site)
+    blacklist = adapter.get_types_not_searched()
+    if 'VersionFolder' in blacklist:
+        blacklist.remove('VersionFolder')
+        adapter.set_types_not_searched(blacklist)
+

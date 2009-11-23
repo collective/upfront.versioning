@@ -2,3 +2,4 @@
 3. Action icons
 4. Recursively fix workflow state on checkout
 5. Member is not presented with menu to derive copy on published page in root.
+6. Version Folder needs an icon
