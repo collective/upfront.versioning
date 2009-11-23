@@ -242,8 +242,6 @@ class Versioner(object):
     def _checkin(self, item):
         """Used by both add_to_repository and checkin"""
 
-        # todo: use semaphore where appropriate
-
         # Fetch the original item
         original = None
         token = IVersionMetadata(item).token

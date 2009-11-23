@@ -53,7 +53,8 @@ class TestAddToRepository(VersioningTestCase):
         checkedin = utility.checkin(copy)
         self.failIf(utility.can_add_to_repository(checkedin))
 
-        # todo: test constrain portal types, dangerous trees etc.
+        # Attempt to add the portal to the repository
+        self.failIf(utility.can_add_to_repository(self.portal))
 
     def test_add_to_repository(self):
         """Content type is not yet in repo, ie. there exists no 

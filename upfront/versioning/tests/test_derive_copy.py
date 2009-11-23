@@ -28,7 +28,8 @@ class TestDeriveCopy(VersioningTestCase):
         # Item has been checked in and we do have Modify Portal Content
         self.failUnless(utility.can_derive_copy(self.portal.repository.document['00000002']['repo-member']))
 
-        # todo: test constrain portal types, dangerous trees etc.
+        # Attempt to derive the portal
+        self.failIf(utility.can_derive_copy(self.portal))
 
     def test_derive(self):
         """Derive an item that is not in the repository."""

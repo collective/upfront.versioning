@@ -1,3 +1,4 @@
 1. Expire item when it is checked out, un-expire on checkin.
 2. Hide version folder from navigation.
 3. Action icons
+4. Recursively fix workflow state on checkout
