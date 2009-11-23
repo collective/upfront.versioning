@@ -70,6 +70,10 @@ class TestCheckout(VersioningTestCase):
         # Is it expired?
         self.failUnless(self.portal.isExpired(copy))
 
+        # Is it published?
+        wf = self.portal.portal_workflow
+        self.assertEquals(wf.getInfoFor(copy, 'review_state'), 'published')
+
     def test_already_checkedout(self):
         """Item is already checked out. Check it out again."""
         utility = getUtility(IVersioner)      
