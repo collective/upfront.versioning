@@ -67,6 +67,12 @@
         handler=".eventhandlers.beforeATObjectDeriveEvent"
         /> 
 
+    <subscriber
+        for="Products.Archetypes.interfaces.IBaseObject
+        .interfaces.IAfterObjectDeriveEvent"
+        handler=".eventhandlers.afterATObjectDeriveEvent"
+        /> 
+
     <include package=".browser" />
 
 </configure>

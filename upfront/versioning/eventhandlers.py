@@ -13,6 +13,14 @@ from Products.CMFEditions.interfaces.IStorage import StoragePurgeError
 
 from upfront.versioning import _
 
+def _removeDiscussion(item):
+    """Remove discussion from item"""
+    tool = getToolByName(item, 'portal_discussion')
+    if tool.isDiscussionAllowedFor(item):
+        # _createDiscussionFor has a handy side effect of clearing the 
+        # discussion
+        tool._createDiscussionFor(item)
+
 def beforeATObjectCheckoutEvent(ob, event):
     """Iterate over object's schema fields and warn for every reference 
     field that does not have keepReferencesOnCopy set to true and whose 
@@ -50,10 +58,16 @@ def afterATObjectCheckoutEvent(ob, event):
         ob.setExpirationDate(expires)
         ob.reindexObject()
 
+    # Remove discussion
+    _removeDiscussion(ob)
+
     # Catalog checked out item and original
     vc = getToolByName(ob, 'upfront_versioning_catalog')
     vc.catalog_object(event.original, skip_interface_check=True)    
     vc.catalog_object(ob)
+
+def afterATObjectDeriveEvent(ob, event):   
+    _removeDiscussion(ob)
 
 def beforeATObjectCheckinEvent(ob, event):
     # Uncatalog checked out item
