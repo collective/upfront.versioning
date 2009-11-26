@@ -61,7 +61,9 @@ D. An item is checked in to the repository
 The item is moved from the workspace into a new position in the repository.
 For example, if the original is in /repository/document/00000002/an-item then
 the new version is moved to /repository/document/00000003/an-item. It may even
-be moved to 00000005 since the versions are sparse just like SVN.
+be moved to 00000005 since the versions are sparse just like SVN. Older 
+versions of the item are expired so as not to show up in queries and the 
+checked in version is un-expired if needed
 
 User interface 
 ============== 
