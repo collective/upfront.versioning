@@ -7,6 +7,9 @@ A checked out version is only visible to the user who checked it out or a
 manager. Catalog queries for content always transparently return the latest
 committed item. It is possible to query for older versions.
 
+Note that the product cannot function unless user folders are enabled in the 
+Site Setup section of the Plone site.
+
 Terminology 
 =========== 
 Workspace: a folder where a user checks out items to
