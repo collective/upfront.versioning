@@ -7,11 +7,22 @@ from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
 from Products.PloneTestCase import PloneTestCase as ptc 
 from Products.PloneTestCase.layer import onsetup
+from Products.GenericSetup import EXTENSION, profile_registry
 
 import upfront.versioning
 from upfront.versioning.interfaces import IVersioner, IVersioningSettings
 
-ptc.setupPloneSite()
+# Register Archetypes sample types
+profile_registry.registerProfile('Archetypes_sampletypes',
+    'Archetypes Sample Content Types',
+    'Extension profile including Archetypes sample content types',
+    'profiles/sample_types',
+    'Products.Archetypes',
+    EXTENSION)
+
+ptc.setupPloneSite(
+    extension_profiles=['Products.Archetypes:Archetypes_sampletypes']
+)
 
 class VersioningTestCase(ptc.PloneTestCase):
     
@@ -27,7 +38,7 @@ class VersioningTestCase(ptc.PloneTestCase):
         # Hack persistent utility since we need Folder to be versionable
         sm = self.portal.getSiteManager()
         utility = sm.getUtility(IVersioningSettings, 'upfront.versioning-settings')
-        utility.versionable_types = ['Document', 'Folder']
+        utility.versionable_types = ['Document', 'Folder', 'DDocument']
         
         utility = getUtility(IVersioner)
 

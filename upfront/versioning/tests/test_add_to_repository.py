@@ -4,9 +4,10 @@ from zope.component import getUtility
 
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PloneTestCase.setup import _createHomeFolder
+from Products.Archetypes.examples.DDocument import DDocument
 
 from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn, \
-    IVersionMetadata
+    IVersionMetadata, IVersioningSettings
 from upfront.versioning.tests.VersioningTestCase import VersioningTestCase
 
 class TestAddToRepository(VersioningTestCase):
@@ -86,6 +87,16 @@ class TestAddToRepository(VersioningTestCase):
             state='checked_in'
         )
         self.failUnless(brains)
+
+    def test_references(self):
+        """Inspect references on an object after it has been added to the repo"""
+        self.loginAsPortalOwner()
+        self.folder.invokeFactory('DDocument', 'ddoc')
+        ddoc = self.folder._getOb('ddoc')
+        ddoc.edit(related=self.portal.events)
+        utility = getUtility(IVersioner)
+        added = utility.add_to_repository(ddoc)
+        self.assertEquals(added.getRelated(), self.portal.events)
 
 def test_suite():
     from unittest import TestSuite, makeSuite
