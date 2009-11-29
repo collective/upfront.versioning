@@ -17,8 +17,8 @@ class IVersioner(Interface):
 
     def can_add_to_repository(item):
         """Return true if (1) item and none of its parents provide either 
-        ICheckedOut or ICheckedIn and (2) item is anonymously viewable, false
-        otherwise."""
+        ICheckedOut or ICheckedIn and (2) IAddToRepositoryPrecondition utility 
+        returns true, false otherwise."""
          
     def can_checkout(item):
         """Return true if ICheckedIn interface is provided by item and 
@@ -39,6 +39,11 @@ class IVersioner(Interface):
     def checkin(item):
         """Checkin item from authenticated member's workspace to 
         repository. Return checked in item."""
+
+class IAddToRepositoryPrecondition(Interface):
+    """Interface for utility which evaluates whether an item may be added to
+    the repository. Third-party products should implement this for custom 
+    behaviour."""
 
 class ICheckedOut(Interface):
     """Marker interface applied to an object on checkout"""

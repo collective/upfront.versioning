@@ -18,12 +18,25 @@ from Products.CMFPlone.utils import _createObjectByType
 from plone.i18n.normalizer.interfaces import IURLNormalizer
 
 from interfaces import IVersioner, IVersionMetadata, ICheckedOut, ICheckedIn, \
-    IVersioningSettings
+    IVersioningSettings, IAddToRepositoryPrecondition
 from events import BeforeObjectDeriveEvent, AfterObjectDeriveEvent, \
     BeforeObjectCheckoutEvent, AfterObjectCheckoutEvent, \
     BeforeObjectCheckinEvent, AfterObjectCheckinEvent
 
 ANNOT_KEY = 'IVersionMetadata'
+
+class AddToRepositoryPrecondition(object):
+    """Implement IAddToRepositoryPrecondition"""
+
+    implements(IAddToRepositoryPrecondition)
+    
+    def __call__(self, item):
+        """The most basic rule. Return if Anonymous has View permission, false 
+        otherwise."""
+        roles = rolesForPermissionOn(View, item)
+        if 'Anonymous' not in roles:
+            return False
+        return True
 
 # Permission decorators - grok has something nicer but we do not want an 
 # extra dependency.
@@ -131,8 +144,7 @@ class Versioner(object):
     @requireModifyPortalContent
     @check_types
     def can_add_to_repository(self, item):
-        roles = rolesForPermissionOn(View, item)
-        if 'Anonymous' not in roles:
+        if not getUtility(IAddToRepositoryPrecondition)(item):
             return False
 
         parent = item

@@ -25,6 +25,11 @@
         provides=".interfaces.IVersioner"
        /> 
 
+    <utility
+        factory=".versioner.AddToRepositoryPrecondition"
+        provides=".interfaces.IAddToRepositoryPrecondition"
+       /> 
+
     <adapter
       for="zope.annotation.interfaces.IAttributeAnnotatable"
       provides=".interfaces.IVersionMetadata"
