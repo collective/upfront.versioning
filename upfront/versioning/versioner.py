@@ -35,11 +35,27 @@ def requireView(func):
         return func(self, item)
     return new
 
+def requireViewRaises(func):
+    def new(self, item):
+        member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
+        if not member.has_permission(View, item):
+            raise RuntimeError, "User does not have View permission"
+        return func(self, item)
+    return new
+
 def requireModifyPortalContent(func):
     def new(self, item):
         member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
         if not member.has_permission(ModifyPortalContent, item):
             return False       
+        return func(self, item)
+    return new
+
+def requireModifyPortalContentRaises(func):
+    def new(self, item):
+        member = getToolByName(item, 'portal_membership').getAuthenticatedMember()
+        if not member.has_permission(ModifyPortalContent, item):
+            raise RuntimeError, "User does not have Modify Portal Content permission"
         return func(self, item)
     return new
 
@@ -154,7 +170,7 @@ class Versioner(object):
 
         return True
 
-    @requireView
+    @requireViewRaises
     @check_children
     def derive_copy(self, item):
         if not self.can_derive_copy(item):
@@ -183,7 +199,7 @@ class Versioner(object):
 
         return copy
 
-    @requireModifyPortalContent
+    @requireModifyPortalContentRaises
     def checkout(self, item):
         if not self.can_checkout(item):
             raise RuntimeError, "Cannot check out %s" % item.absolute_url()
@@ -320,7 +336,7 @@ class Versioner(object):
 
         return checkedin
 
-    @requireModifyPortalContent
+    @requireModifyPortalContentRaises
     @check_children
     def add_to_repository(self, item):
         if not self.can_add_to_repository(item):
@@ -331,7 +347,7 @@ class Versioner(object):
 
         return self._checkin(item)
 
-    @requireModifyPortalContent
+    @requireModifyPortalContentRaises
     def checkin(self, item):
         if not self.can_checkin(item):
             raise RuntimeError, "Cannot check in %s" % item.absolute_url()
