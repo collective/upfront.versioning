@@ -1,4 +1,5 @@
 from string import zfill
+from random import randint
 from DateTime import DateTime
 
 from persistent.dict import PersistentDict
@@ -193,9 +194,17 @@ class Versioner(object):
         notify(BeforeObjectDeriveEvent(item))
 
         # Copy the item
-        cp = item.aq_parent.manage_copyObjects([item.id])
-        res = workspace.manage_pasteObjects(cp)
-        copy = workspace._getOb(res[0]['new_id'])
+        #cp = item.aq_parent.manage_copyObjects([item.id])
+        #res = workspace.manage_pasteObjects(cp)
+        #copy = workspace._getOb(res[0]['new_id'])
+
+        copy = item._getCopy(workspace)
+        copy_id = item.id
+        while copy_id in workspace.objectIds():
+            copy_id = '%s-%s' % (item.id, randint(1, 1000000))
+        copy._setId(copy_id)
+        workspace._setObject(copy.id, copy, set_owner=1, suppress_events=False)
+        copy = workspace._getOb(copy.id)
 
         # Remove marker interfaces if it applies
         if ICheckedIn.providedBy(copy):
@@ -226,9 +235,17 @@ class Versioner(object):
         notify(BeforeObjectCheckoutEvent(item))
 
         # Copy the item
-        cp = item.aq_parent.manage_copyObjects([item.id])
-        res = workspace.manage_pasteObjects(cp)
-        copy = workspace._getOb(res[0]['new_id'])
+        #cp = item.aq_parent.manage_copyObjects([item.id])
+        #res = workspace.manage_pasteObjects(cp)
+        #copy = workspace._getOb(res[0]['new_id'])
+
+        copy = item._getCopy(workspace)
+        copy_id = item.id
+        while copy_id in workspace.objectIds():
+            copy_id = '%s-%s' % (item.id, randint(1, 1000000))
+        copy._setId(copy_id)
+        workspace._setObject(copy.id, copy, set_owner=1, suppress_events=False)
+        copy = workspace._getOb(copy.id)
 
         # Remove workflow history
         unwrapped = aq_base(copy)
@@ -329,9 +346,14 @@ class Versioner(object):
         )
 
         # Move our copy there
-        cp = item.aq_parent.manage_cutObjects(ids=[item.id])
-        res = folder.manage_pasteObjects(cp)
-        checkedin = folder._getOb(res[0]['new_id'])
+        #cp = item.aq_parent.manage_cutObjects(ids=[item.id])
+        #res = folder.manage_pasteObjects(cp)
+        #checkedin = folder._getOb(res[0]['new_id'])
+
+        item.aq_parent._delObject(item.id, suppress_events=False)
+        item = aq_base(item)
+        folder._setObject(item.id, item, set_owner=0, suppress_events=False)
+        checkedin = folder._getOb(item.id)
 
         # If checked in item's id does not match that of original then rename
         if (original is not None) and (checkedin.id != original.id):
