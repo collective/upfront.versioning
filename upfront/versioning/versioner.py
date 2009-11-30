@@ -275,9 +275,11 @@ class Versioner(object):
         if ICheckedIn.providedBy(copy):
             noLongerProvides(copy, ICheckedIn)
         alsoProvides(copy, ICheckedOut)
+        '''
         modifyRolesForPermission(copy, 'View', ('Manager','Owner'))
         for dontcare, child in copy.ZopeFind(copy, search_sub=1):
             modifyRolesForPermission(child, 'View', ('Manager','Owner'))
+        '''
 
         # Reindex to update catalog
         copy.reindexObject()
@@ -303,12 +305,14 @@ class Versioner(object):
 
         # Restore View permission of item and children by using the workflow
         # tool
+        '''
         wf = getToolByName(item, 'portal_workflow')
         wfs = {}
         for ob in wf.getWorkflowsFor(item):
             if hasattr(aq_base(ob), 'updateRoleMappingsFor'):
                 wfs[ob.id] = ob
         wf._recursiveUpdateRoleMappings(item, wfs)
+        '''
 
         # Find the folder where these portal type versions are stored
         portal = getToolByName(item, 'portal_url').getPortalObject()
