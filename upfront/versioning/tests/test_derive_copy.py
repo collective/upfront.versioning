@@ -56,6 +56,13 @@ class TestDeriveCopy(VersioningTestCase):
         utility = getUtility(IVersioner)
         self.assertRaises(RuntimeError, utility.derive_copy, self.portal)
 
+    def test_references(self):
+        """Inspect references on an item after it has derived"""
+        ddoc = self.portal.repository.ddocument['00000001']['repo-ddocument']
+        utility = getUtility(IVersioner)
+        copy = utility.derive_copy(ddoc)
+        self.assertEquals(copy.getRelated(), ddoc.getRelated())
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

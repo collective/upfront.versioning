@@ -123,6 +123,13 @@ class TestCheckout(VersioningTestCase):
         wf = self.portal.portal_workflow
         self.assertEquals(wf.getInfoFor(copy.contained, 'review_state'), 'published')
 
+    def test_references(self):
+        """Inspect references on an item after it has been checked out"""
+        ddoc = self.portal.repository.ddocument['00000001']['repo-ddocument']
+        utility = getUtility(IVersioner)
+        copy = utility.checkout(ddoc)
+        self.assertEquals(copy.getRelated(), ddoc.getRelated())
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

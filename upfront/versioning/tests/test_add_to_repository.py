@@ -89,7 +89,7 @@ class TestAddToRepository(VersioningTestCase):
         self.failUnless(brains)
 
     def test_references(self):
-        """Inspect references on an object after it has been added to the repo"""
+        """Inspect references on an item after it has been added to the repo"""
         self.loginAsPortalOwner()
         self.folder.invokeFactory('DDocument', 'ddoc')
         ddoc = self.folder._getOb('ddoc')

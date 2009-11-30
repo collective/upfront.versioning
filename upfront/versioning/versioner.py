@@ -194,10 +194,6 @@ class Versioner(object):
         notify(BeforeObjectDeriveEvent(item))
 
         # Copy the item
-        #cp = item.aq_parent.manage_copyObjects([item.id])
-        #res = workspace.manage_pasteObjects(cp)
-        #copy = workspace._getOb(res[0]['new_id'])
-
         copy = item._getCopy(workspace)
         copy_id = item.id
         while copy_id in workspace.objectIds():
@@ -235,10 +231,6 @@ class Versioner(object):
         notify(BeforeObjectCheckoutEvent(item))
 
         # Copy the item
-        #cp = item.aq_parent.manage_copyObjects([item.id])
-        #res = workspace.manage_pasteObjects(cp)
-        #copy = workspace._getOb(res[0]['new_id'])
-
         copy = item._getCopy(workspace)
         copy_id = item.id
         while copy_id in workspace.objectIds():
@@ -346,10 +338,7 @@ class Versioner(object):
         )
 
         # Move our copy there
-        #cp = item.aq_parent.manage_cutObjects(ids=[item.id])
-        #res = folder.manage_pasteObjects(cp)
-        #checkedin = folder._getOb(res[0]['new_id'])
-
+        item._notifyOfCopyTo(folder, op=1)
         item.aq_parent._delObject(item.id, suppress_events=False)
         item = aq_base(item)
         folder._setObject(item.id, item, set_owner=0, suppress_events=False)

@@ -43,6 +43,14 @@ class TestCheckin(VersioningTestCase):
         # Is it not expired?
         self.failIf(self.portal.isExpired(checkedin))
 
+    def test_references(self):
+        """Inspect references on an item after it has been checked in"""
+        ddoc = self.portal.repository.ddocument['00000001']['repo-ddocument']
+        utility = getUtility(IVersioner)
+        copy = utility.checkout(ddoc)
+        checkedin = utility.checkin(copy)
+        self.assertEquals(checkedin.getRelated(), ddoc.getRelated())
+
 def test_suite():
     from unittest import TestSuite, makeSuite
 

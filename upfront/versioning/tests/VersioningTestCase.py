@@ -73,8 +73,9 @@ class VersioningTestCase(ptc.PloneTestCase):
         # Create documents in workspace as member
         created = []
         for portal_type, id in (
-            ('Document', 'repo-member'),
+            ('Document', 'repo-member'),            
             ('Folder', 'folder-containing-item'),
+            ('DDocument', 'repo-ddocument'),
             ):
             ob = _createObjectByType(portal_type, workspace, id)
             fti = self.portal.portal_types.getTypeInfo(portal_type)
