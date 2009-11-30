@@ -21,6 +21,8 @@ def postInstall(context):
         folder = _createObjectByType(
             'VersionFolder', site, 'repository', title='Repository'
         )
+        fti = site.portal_types.getTypeInfo('Folder')
+        fti._finishConstruction(folder)
 
     # Create catalog
     id = 'upfront_versioning_catalog'

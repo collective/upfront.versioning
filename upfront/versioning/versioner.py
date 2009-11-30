@@ -128,7 +128,9 @@ class Versioner(object):
         if home is None:
             raise RuntimeError, "Members must have home folders for versioning to function properly"
         if 'workspace' not in home.objectIds():
-            home.invokeFactory('Folder', id='workspace', title='Workspace')
+            ob = _createObjectByType('Folder', home, id='workspace', title='Workspace')
+            fti = getToolByName(context, 'portal_types').getTypeInfo('Folder')
+            fti._finishConstruction(ob)
         return home.workspace
 
     @requireView
