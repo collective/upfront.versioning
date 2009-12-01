@@ -69,7 +69,7 @@
         permission="cmf.ModifyPortalContent" 
         />
 
-    <!-- Contronel panel -->
+    <!-- Control panel -->
     <adapter factory=".configlets.VersioningSettingsConfigletAdapter" />
 
     <browser:page
@@ -85,6 +85,11 @@
         name="upfront.versioning-portal_types"
         />
  
+     <browser:resourceDirectory
+        name="upfront.versioning-images"
+        directory="images" 
+        /> 
+
     <include package=".viewlets" />
 
 </configure>
