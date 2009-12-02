@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<action-icons xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="upfront.versioning">
+ <action-icon category="object_buttons" action_id="checkout"
+              title="Checkout" priority="0"
+              icon_expr="++resource++upfront.versioning-images/checkout.png"
+              i18n:attributes="title"/>
+ <action-icon category="object_buttons" action_id="checkin"
+              title="Checkin" priority="0"
+              icon_expr="++resource++upfront.versioning-images/checkin.png"
+              i18n:attributes="title"/>
+</action-icons>
