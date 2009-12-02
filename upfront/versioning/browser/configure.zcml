@@ -90,6 +90,11 @@
         directory="images" 
         /> 
 
+    <browser:resourceDirectory
+        name="upfront.versioning-css"
+        directory="css" 
+        /> 
+
     <include package=".viewlets" />
 
 </configure>
