@@ -4,3 +4,10 @@ div.documentActions li#document-action-checkout {
     padding-left: 20px;
     background-position: 2px 0px;
 }
+
+div.documentActions li#document-action-checkout {
+    background-image: url(++resource++upfront.versioning-images/checkin.png);
+    background-repeat: no-repeat;
+    padding-left: 20px;
+    background-position: 2px 0px;
+}
