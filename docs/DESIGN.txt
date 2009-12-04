@@ -17,6 +17,10 @@ and AfterObjectDeriveEvent.
 It has accompanying methods for each operation, eg. can_checkout 
 and can_checkin.
 
+B. browser.views.VersioningView
+Every method in utility Versioner is exposed as a view, eg. method 
+can_derive_copy is @@upfront.versioning-can-derive-copy.
+
 B. Adapter versioner.VersionMetadata implements IVersioner adapts IAttributeAnnotatable
 It stores information about versioning as an annotation on an object. Adapting 
 an object exposes the information through properties.
@@ -47,3 +51,6 @@ These events
       lost on a checkout
     - expires / un-expires objects
 
+G. Viewlet browser.viewlets.versions.VersionsViewlet
+A viewlet displaying versioning information below the object content. It is 
+loaded asynchronously.
