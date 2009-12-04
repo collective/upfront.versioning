@@ -1,48 +1,48 @@
-The design document is a good candidate for a doctest, but since the test 
-suite already exists it is a plain document.
+The design document is a good candidate for a doctest, but since the test suite
+already exists it is a plain document.
 
-The interfaces.py module has detailed doc strings for every method of 
-every class. This document is concerned with the class itself and its 
-role in the product.
+The interfaces.py module has detailed doc strings for every method of every
+class. This document is concerned with the class itself and its role in the
+product.
 
 Components
 ==========
 
 A. Utility versioner.Versioner implements IVersioner
-It is responsible for 
-add to repository, derive copy, checkout and checkin methods. These methods 
-publish events before and after every operation, eg. BeforeObjectDeriveEvent 
-and AfterObjectDeriveEvent.
+It is responsible for add to repository, derive copy, checkout and checkin
+methods. These methods publish events before and after every operation, eg.
+BeforeObjectDeriveEvent and AfterObjectDeriveEvent.
 
-It has accompanying methods for each operation, eg. can_checkout 
-and can_checkin.
+It has accompanying methods for each operation, eg. can_checkout and
+can_checkin.
 
 B. browser.views.VersioningView
-Every method in utility Versioner is exposed as a view, eg. method 
+Every method in utility Versioner is exposed as a view, eg. method
 can_derive_copy is @@upfront.versioning-can-derive-copy.
 
-B. Adapter versioner.VersionMetadata implements IVersioner adapts IAttributeAnnotatable
-It stores information about versioning as an annotation on an object. Adapting 
+C. Adapter versioner.VersionMetadata implements IVersioner adapts IAttributeAnnotatable
+It stores information about versioning as an annotation on an object. Adapting
 an object exposes the information through properties.
 
-C. Utility AddToRepositoryPrecondition implements IAddToRepositoryPrecondition
-It answers a single question: can the object be added to the repository? It 
-is not the ultimate result of the can_add_to_repository method - rather it 
-forms part of a chain of checks, but it is the only check that may need to 
-be customized.
+D. Utility AddToRepositoryPrecondition implements IAddToRepositoryPrecondition
+It answers a single question: can the object be added to the repository? It is
+not the ultimate result of the can_add_to_repository method - rather it forms
+part of a chain of checks, but it is the only check that may need to be
+customized.
 
-D. Persistent utility utilities.VersionSettings implements IVersioningSettings
-It has a configlet as editing interface. The versionable_types list defines 
+E. Persistent utility utilities.VersionSettings implements IVersioningSettings
+It has a configlet as editing interface. The versionable_types list defines
 which portal types can be versioned.
 
-E. Catalog tool catalog.VersioningCatalog indexes a token (for Archetypes content 
-this is the UID), state (checked_in, checked_out) and path of an object 
-which has been handled by the Versioner utility. It provides methods for 
-retrieving versioning information for an object.
+F. Catalog tool catalog.VersioningCatalog 
+Indexes a token (for Archetypes content this is the UID), state (checked_in,
+checked_out) and path of an object which has been handled by the Versioner
+utility. It provides methods for retrieving versioning information for an
+object.
 
-F. Event handlers
-The event handlers subscribe to a subset of the events published by the Versioner 
-utility. 
+G. Event handlers
+The event handlers subscribe to a subset of the events published by the
+Versioner utility. 
 
 These events 
     - ensure that the VersioningCatalog is updated
@@ -51,6 +51,6 @@ These events
       lost on a checkout
     - expires / un-expires objects
 
-G. Viewlet browser.viewlets.versions.VersionsViewlet
-A viewlet displaying versioning information below the object content. It is 
+H. Viewlet browser.viewlets.versions.VersionsViewlet
+A viewlet displaying versioning information below the object content. It is
 loaded asynchronously.
