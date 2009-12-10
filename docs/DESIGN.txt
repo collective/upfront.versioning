@@ -41,11 +41,7 @@ Versioner utility.
 
 These events 
     - Strip discussions from objects
-    - Informs the user that the object contains references that will be
-      lost on starting a new version. Archetypes by default does not preserve 
-      references when an item is copied unless keepReferencesOnCopy is set 
-      for a field in the schema.
-      xxx: just thought of a way to handle this transparently !
+    - Ensure that references are preserved when starting a new version
     - Expires / un-expires objects
 
 H. Viewlet browser.viewlets.versions.VersionsViewlet

@@ -30,13 +30,7 @@
       provides=".interfaces.IVersionMetadata"
       factory=".versioner.VersionMetadata"
       />
-
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-        .interfaces.IBeforeObjectCheckoutEvent"
-        handler=".eventhandlers.beforeATObjectCheckoutEvent"
-        /> 
-
+    
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
         .interfaces.IAfterObjectCheckoutEvent"

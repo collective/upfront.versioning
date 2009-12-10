@@ -144,6 +144,7 @@ class Versioner(object):
 
         # Create a sibling for item. The id is computed by incrementing
         # the version stored in the IVersionMetadata adapted item.
+        item._notifyOfCopyTo(item.aq_parent, op=0)
         copy = item._getCopy(item.aq_parent)
         # Initialize IVersionMetadata for this copy. This provides a new 
         # version number.

@@ -19,34 +19,19 @@ def _removeDiscussion(item):
         # discussion
         tool._createDiscussionFor(item)
 
-def beforeATObjectCheckoutEvent(ob, event):
-    """Iterate over object's schema fields and warn for every reference 
-    field that does not have keepReferencesOnCopy set to true and whose 
-    value is set."""
-    problems = []
-    for field in ob.Schema().fields():
-        if (field.type == 'reference') and not field.keepReferencesOnCopy:
-            # Ignore if no value is set
-            accessor = field.getAccessor(ob)
-            if accessor():
-                problems.append(field)
-
-    if problems:                
-        # todo: figure out why mapping replacement does not work
-        msg = _(
-            u"Reference ${plurality} ${fields} will not keep its value",
-            mapping={
-                'plurality':(len(problems) > 1) and 'fields' or 'field',
-                'fields': ', '.join([f.getName() for f in problems])
-            }
-        )
-        msg = u"Reference %s %s will not keep its value" \
-            % ((len(problems) > 1) and 'fields' or 'field', ', '.join([f.getName() for f in problems]))
-        logger = logging.getLogger('upfront.versioning')
-        logger.warn(msg)
-        getToolByName(ob, 'plone_utils').addPortalMessage(msg, type='warn')
-
 def afterATObjectCheckoutEvent(ob, event):   
+    # Fix references. Fields that have keepReferencesOnCopy set do not 
+    # need to be fixed.
+    original = event.original
+    for field in original.Schema().fields():
+        if (field.type == 'reference'):
+            accessor = field.getAccessor(original)
+            original_value = accessor()
+            accessor = field.getAccessor(ob)
+            new_value = accessor()
+            if new_value != original_value:
+                field.set(ob, original_value)
+
     # Expire checked out item
     # xxx: abuse allowedRolesAndUsers
 
