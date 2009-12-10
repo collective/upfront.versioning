@@ -50,6 +50,22 @@
         name="upfront.versioning-version-folder"
         /> 
 
+    <!-- Custom breadcrumbs -->
+    <browser:page
+        for="upfront.versioning.interfaces.ICheckedIn"
+        name="breadcrumbs_view"
+        class=".navigation.VersionFolderPhysicalNavigationBreadcrumbs"
+        permission="zope.Public"
+        allowed_attributes="breadcrumbs"
+    />
+    <browser:page
+        for="upfront.versioning.interfaces.ICheckedOut"
+        name="breadcrumbs_view"
+        class=".navigation.VersionFolderPhysicalNavigationBreadcrumbs"
+        permission="zope.Public"
+        allowed_attributes="breadcrumbs"
+    />
+
     <!-- Control panel -->
     <adapter factory=".configlets.VersioningSettingsConfigletAdapter" />
 

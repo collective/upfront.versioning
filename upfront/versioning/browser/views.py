@@ -49,7 +49,6 @@ class VersionFolderView(BrowserView):
             
         vc = getToolByName(self.context, 'upfront_versioning_catalog')
         latest = vc.getLatestVersionOf(children[0])
-        self.context.plone_log(latest.absolute_url())
         return latest.base_view()
 
 class WorkflowSubMenuItem(BaseWorkflowSubMenuItem):
