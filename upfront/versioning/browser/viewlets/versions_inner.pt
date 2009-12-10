@@ -1,6 +1,6 @@
 
         <div tal:condition="view/checkedin_versions">
-        <label i18n:translate="checked_in">Checked in</label>
+        <label i18n:translate="committed">Committed</label>
         <table class="listing">
             <tr>
                 <th i18n:translate="item">Item</th>
@@ -24,7 +24,7 @@
         </div>
 
         <div tal:condition="view/checkedout_versions">
-        <label i18n:translate="checked_out">Checked out</label>
+        <label i18n:translate="draft">Draft</label>
         <table class="listing">
             <tr>
                 <th i18n:translate="item">Item</th>

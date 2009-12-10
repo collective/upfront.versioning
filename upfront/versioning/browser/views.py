@@ -33,7 +33,7 @@ class VersioningView(BrowserView):
 
     def commit(self):
         utility = getUtility(IVersioner)
-        obj = utility.checkin(aq_inner(self.context))
+        obj = utility.commit(aq_inner(self.context))
         msg = _("The item has been committed")
         getToolByName(self.context, 'plone_utils').addPortalMessage(
             msg, type='info'
