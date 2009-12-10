@@ -141,6 +141,8 @@ class Versioner(object):
             # Catalog item
             vc = getToolByName(item, 'upfront_versioning_catalog')
             vc.reindexObject(item)
+            pc = getToolByName(item, 'portal_catalog')
+            pc.reindexObject(item)
 
         # Create a sibling for item. The id is computed by incrementing
         # the version stored in the IVersionMetadata adapted item.
@@ -217,6 +219,7 @@ class Versioner(object):
         # Reindex this version
         vc = getToolByName(item, 'upfront_versioning_catalog')
         vc.catalog_object(item)
+        item.reindexObject()
 
         notify(AfterObjectCheckinEvent(item, original))
 

@@ -64,12 +64,19 @@ class TestStartNewVersion(VersioningTestCase):
         self.assertEquals(adapted.state, 'checked_in')
         self.assertEquals(adapted.version, 1)
 
-        # Is it in catalog?
+        # Is it in versioning catalog?
         vc = self.portal.upfront_versioning_catalog
         brains = vc(
             path='/'.join(version1.getPhysicalPath()), 
             token=version1.UID(),
             state='checked_in'
+        )
+        self.failUnless(brains)      
+
+        # Is it in portal catalog?
+        pc = self.portal.portal_catalog
+        brains = pc(
+            path='/'.join(version1.getPhysicalPath()), 
         )
         self.failUnless(brains)      
 
@@ -91,7 +98,7 @@ class TestStartNewVersion(VersioningTestCase):
         self.assertEquals(adapted.state, 'checked_out')
         self.assertEquals(adapted.version, 2)
 
-        # Is it in catalog?
+        # Is it in version catalog?
         vc = self.portal.upfront_versioning_catalog
         brains = vc(
             path='/'.join(version2.getPhysicalPath()), 

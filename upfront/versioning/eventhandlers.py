@@ -32,9 +32,6 @@ def afterATObjectCheckoutEvent(ob, event):
             if new_value != original_value:
                 field.set(ob, original_value)
 
-    # Expire checked out item
-    # xxx: abuse allowedRolesAndUsers
-
     # Remove discussion
     _removeDiscussion(ob)
     

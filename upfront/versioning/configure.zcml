@@ -30,7 +30,10 @@
       provides=".interfaces.IVersionMetadata"
       factory=".versioner.VersionMetadata"
       />
-    
+   
+    <!-- Register indexer -->
+    <adapter name="allowedRolesAndUsers" factory=".indexer.content_allowedRolesAndUsers" />
+
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
         .interfaces.IAfterObjectCheckoutEvent"
