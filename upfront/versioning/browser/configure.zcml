@@ -37,6 +37,19 @@
         permission="cmf.ModifyPortalContent" 
         />
 
+    <!-- Set up a default view for version folders -->
+    <browser:page 
+        for="upfront.versioning.content.interfaces.IVersionFolder"
+        name="upfront.versioning-version-folder"
+        class=".views.VersionFolderView"
+        permission="cmf.ModifyPortalContent" 
+        />
+
+    <browser:defaultView
+        for="upfront.versioning.content.interfaces.IVersionFolder"
+        name="upfront.versioning-version-folder"
+        /> 
+
     <!-- Control panel -->
     <adapter factory=".configlets.VersioningSettingsConfigletAdapter" />
 
