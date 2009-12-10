@@ -6,7 +6,8 @@
                 <th i18n:translate="item">Item</th>
                 <th i18n:translate="owner">Owner</th>
                 <th i18n:translate="date">Date</th>
-                <th i18n:translate="version">Version</th>
+                <th i18n:translate="base_version">Version</th>
+                <th i18n:translate="based_on_version">Based on version</th>
             </tr>
             <tr tal:repeat="v view/checkedin_versions"
                 tal:attributes="class python:repeat['v'].odd() and 'even' or 'odd'">
@@ -19,6 +20,7 @@
                 <td tal:content="v/owner"></td>
                 <td tal:content="python:v['date'].strftime('%d %B %Y %H:%M')"></td>
                 <td tal:content="v/version"></td>
+                <td tal:content="v/base_version"></td>
             </tr>    
         </table>
         </div>
@@ -30,7 +32,8 @@
                 <th i18n:translate="item">Item</th>
                 <th i18n:translate="owner">Owner</th>
                 <th i18n:translate="date">Date</th>
-                <th i18n:translate="base_version">Base version</th>
+                <th i18n:translate="base_version">Version</th>
+                <th i18n:translate="based_on_version">Based on version</th>
             </tr>
             <tr tal:repeat="v view/checkedout_versions"
                 tal:attributes="class python:repeat['v'].odd() and 'even' or 'odd'">
@@ -43,6 +46,7 @@
                 <td tal:content="v/owner"></td>
                 <td tal:content="python:v['date'].strftime('%d %B %Y %H:%M')"></td>
                 <td tal:content="v/version"></td>
+                <td tal:content="v/base_version"></td>
             </tr>    
         </table>
         </div>

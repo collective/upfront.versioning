@@ -75,6 +75,7 @@ class VersionsView(BrowserView):
                 state=adapted.state,
                 owner=ob.getOwner(),
                 version=adapted.version,
+                base_version=adapted.base_version,
                 date=adapted.date,
                 url=member.has_permission(View, ob) and brain.getURL() or None,
                 title=ob.title,

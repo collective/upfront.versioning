@@ -243,6 +243,7 @@ class VersionMetadata(AttributeAnnotations):
                 token=IVersionMetadata(item).token or item.UID(),
                 date=DateTime(),
                 version=version,
+                base_version=IVersionMetadata(item).version,
             )
         )
  
@@ -272,6 +273,12 @@ class VersionMetadata(AttributeAnnotations):
     def version(self):        
         if self.has_key(ANNOT_KEY):
             return self[ANNOT_KEY].get('version', None)
+        return None
+
+    @property
+    def base_version(self):        
+        if self.has_key(ANNOT_KEY):
+            return self[ANNOT_KEY].get('base_version', None)
         return None
 
     @property

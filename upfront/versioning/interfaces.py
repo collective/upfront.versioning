@@ -63,6 +63,9 @@ class IVersionMetadata(IAnnotations):
     def version():
         """Return version info if possible, None otherwise"""
 
+    def base_version():
+        """Return base version info if possible, None otherwise"""
+
     def date():
         """Return date info if possible, None otherwise"""
 
