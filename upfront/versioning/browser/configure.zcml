@@ -7,65 +7,33 @@
 
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-can-derive-copy"
+        name="upfront.versioning-can-start-new-version"
         class=".views.VersioningView"
-        attribute="can_derive_copy"
-        permission="zope2.View" 
-        />
-
-    <browser:page 
-        for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-can-add-to-repository"
-        class=".views.VersioningView"
-        attribute="can_add_to_repository"
-        permission="cmf.ModifyPortalContent" 
-        />
-
-    <browser:page        
-        for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-can-checkout"
-        class=".views.VersioningView"
-        attribute="can_checkout"
-        permission="cmf.ModifyPortalContent" 
-        />
-
-    <browser:page         
-        for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-can-checkin"
-        class=".views.VersioningView"
-        attribute="can_checkin"
+        attribute="can_start_new_version"
         permission="cmf.ModifyPortalContent" 
         />
 
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-derive-copy"
+        name="upfront.versioning-can-commit"
         class=".views.VersioningView"
-        attribute="derive_copy"
-        permission="zope2.View" 
+        attribute="can_commit"
+        permission="cmf.ModifyPortalContent" 
         />
-  
+ 
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-add-to-repository"
+        name="upfront.versioning-start-new-version"
         class=".views.VersioningView"
-        attribute="add_to_repository"
+        attribute="start_new_version"
         permission="cmf.ModifyPortalContent" 
         />
 
     <browser:page 
         for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-checkout"
+        name="upfront.versioning-commit"
         class=".views.VersioningView"
-        attribute="checkout"
-        permission="cmf.ModifyPortalContent" 
-        />
-
-    <browser:page 
-        for="Products.Archetypes.interfaces.IBaseObject"
-        name="upfront.versioning-checkin"
-        class=".views.VersioningView"
-        attribute="checkin"
+        attribute="commit"
         permission="cmf.ModifyPortalContent" 
         />
 

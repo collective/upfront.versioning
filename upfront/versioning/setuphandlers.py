@@ -16,14 +16,6 @@ def postInstall(context):
     if isNotUpfrontVersioningProfile(context): return 
     site = context.getSite()
 
-    # Create repository
-    if 'repository' not in site.objectIds():
-        folder = _createObjectByType(
-            'VersionFolder', site, 'repository', title='Repository'
-        )
-        fti = site.portal_types.getTypeInfo('Folder')
-        fti._finishConstruction(folder)
-
     # Create catalog
     id = 'upfront_versioning_catalog'
     if id not in site.objectIds():

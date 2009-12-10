@@ -51,3 +51,8 @@ class VersioningCatalog(CatalogTool):
         if not (ICheckedOut.providedBy(obj) or ICheckedIn.providedBy(obj)):
             return []
         return self(token=IVersionMetadata(obj).token)
+
+    def getHighestVersionNumberOf(self, obj):
+        """Return highest version number of object identified by token"""
+        versions = [b.version for b in self(token=IVersionMetadata(obj).token)] + [0]
+        return max(versions)

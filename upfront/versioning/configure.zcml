@@ -15,7 +15,7 @@
     <genericsetup:registerProfile
         name="default"
         title="Upfront Versioning"
-        description="x"
+        description=""
         directory="profiles/default"
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
@@ -23,11 +23,6 @@
     <utility
         factory=".versioner.Versioner"
         provides=".interfaces.IVersioner"
-       /> 
-
-    <utility
-        factory=".versioner.AddToRepositoryPrecondition"
-        provides=".interfaces.IAddToRepositoryPrecondition"
        /> 
 
     <adapter
@@ -50,12 +45,6 @@
 
     <subscriber
         for="Products.Archetypes.interfaces.IBaseObject
-            .interfaces.IBeforeObjectCheckinEvent"
-        handler=".eventhandlers.beforeATObjectCheckinEvent"
-        /> 
-
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
             .interfaces.IAfterObjectCheckinEvent"
         handler=".eventhandlers.afterATObjectCheckinEvent"
         /> 
@@ -64,18 +53,6 @@
         for="Products.Archetypes.interfaces.IBaseObject      
             zope.app.container.interfaces.IObjectMovedEvent"
         handler=".eventhandlers.onATObjectMovedEvent"
-        /> 
-
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-        .interfaces.IBeforeObjectDeriveEvent"
-        handler=".eventhandlers.beforeATObjectDeriveEvent"
-        /> 
-
-    <subscriber
-        for="Products.Archetypes.interfaces.IBaseObject
-        .interfaces.IAfterObjectDeriveEvent"
-        handler=".eventhandlers.afterATObjectDeriveEvent"
         /> 
 
     <!-- Suppress deprecation warnings -->

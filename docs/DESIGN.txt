@@ -1,55 +1,52 @@
-The design document is a good candidate for a doctest, but since the test suite
-already exists it is a plain document.
-
-The interfaces.py module has detailed doc strings for every method of every
-class. This document is concerned with the class itself and its role in the
-product.
+Reade README.txt for a high-level overview.
 
 Components
 ==========
 
 A. Utility versioner.Versioner implements IVersioner
-It is responsible for add to repository, derive copy, checkout and checkin
-methods. These methods publish events before and after every operation, eg.
-BeforeObjectDeriveEvent and AfterObjectDeriveEvent.
+It implements start_new_version and commit methods. These methods publish 
+events before and after every operation, eg. BeforeObjectCommitEvent and 
+AfterObjectCommitEvent.
 
 It has accompanying methods for each operation, eg. can_checkout and
 can_checkin.
 
 B. browser.views.VersioningView
 Every method in utility Versioner is exposed as a view, eg. method
-can_derive_copy is @@upfront.versioning-can-derive-copy.
+can_start_new_version is @@upfront.versioning-can-start-new-version. This makes 
+it possible to wire in versioning urls into portal_actions.
 
 C. Adapter versioner.VersionMetadata implements IVersioner adapts IAttributeAnnotatable
 It stores information about versioning as an annotation on an object. Adapting
 an object exposes the information through properties.
 
-D. Utility AddToRepositoryPrecondition implements IAddToRepositoryPrecondition
-It answers a single question: can the object be added to the repository? It is
-not the ultimate result of the can_add_to_repository method - rather it forms
-part of a chain of checks, but it is the only check that may need to be
-customized.
+All versioning information is provided by the annotation. No versioning information 
+is inferred from an object's location in the site. The annotation stores the version 
+number, the date the object was versioned, and a token which enables lookup of other 
+versions of the object.
 
-E. Persistent utility utilities.VersionSettings implements IVersioningSettings
+D. Persistent utility utilities.VersionSettings implements IVersioningSettings
 It has a configlet as editing interface. The versionable_types list defines
 which portal types can be versioned.
 
-F. Catalog tool catalog.VersioningCatalog 
+E. Catalog tool catalog.VersioningCatalog 
 Indexes a token (for Archetypes content this is the UID), state (checked_in,
 checked_out) and path of an object which has been handled by the Versioner
 utility. It provides methods for retrieving versioning information for an
-object.
+object: isCatalogued, getVersionsOf, getHighestVersionNumberOf
 
 G. Event handlers
 The event handlers subscribe to a subset of the events published by the
 Versioner utility. 
 
 These events 
-    - ensure that the VersioningCatalog is updated
-    - discussions are stripped from objects
-    - the user is informed that the object contains references that will be
-      lost on a checkout
-    - expires / un-expires objects
+    - Strip discussions from objects
+    - Informs the user that the object contains references that will be
+      lost on starting a new version. Archetypes by default does not preserve 
+      references when an item is copied unless keepReferencesOnCopy is set 
+      for a field in the schema.
+      xxx: just thought of a way to handle this transparently !
+    - Expires / un-expires objects
 
 H. Viewlet browser.viewlets.versions.VersionsViewlet
 A viewlet displaying versioning information below the object content. It is

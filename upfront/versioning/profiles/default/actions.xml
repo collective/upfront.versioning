@@ -4,13 +4,13 @@
 
  <object name="object_buttons" meta_type="CMF Action Category">
   <property name="title"></property>
-  <object name="checkout" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Checkout</property>
+  <object name="start_new_version" meta_type="CMF Action" i18n:domain="upfront.versioning">
+   <property name="title" i18n:translate="">Start new version</property>
    <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-checkout</property>
+   <property name="url_expr">string:$object_url/@@upfront.versioning-start-new-version</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">object/@@upfront.versioning-can-checkout|nothing</property>
+      name="available_expr">object/@@upfront.versioning-can-start-new-version|nothing</property>
    <property name="permissions">
     <element value="View"/>
    </property>
@@ -20,62 +20,13 @@
 
  <object name="object_buttons" meta_type="CMF Action Category">
   <property name="title"></property>
-  <object name="checkin" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Checkin</property>
+  <object name="commit" meta_type="CMF Action" i18n:domain="upfront.versioning">
+   <property name="title" i18n:translate="">Commit</property>
    <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-checkin</property>
+   <property name="url_expr">string:$object_url/@@upfront.versioning-commit</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">object/@@upfront.versioning-can-checkin|nothing</property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
-
- <object name="object_buttons" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="derive_copy" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Derive copy</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-derive-copy</property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@upfront.versioning-can-derive-copy|nothing</property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
-
- <object name="object_buttons" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="add_to_repository" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Add to repository</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-add-to-repository</property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@upfront.versioning-can-add-to-repository|nothing</property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
-
-
- <object name="document_actions" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="checkout" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Checkout</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-checkout</property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@upfront.versioning-can-checkout|nothing</property>
+      name="available_expr">object/@@upfront.versioning-can-commit|nothing</property>
    <property name="permissions">
     <element value="View"/>
    </property>
@@ -85,13 +36,13 @@
 
  <object name="document_actions" meta_type="CMF Action Category">
   <property name="title"></property>
-  <object name="checkin" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Checkin</property>
+  <object name="start_new_version" meta_type="CMF Action" i18n:domain="upfront.versioning">
+   <property name="title" i18n:translate="">Start new version</property>
    <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-checkin</property>
+   <property name="url_expr">string:$object_url/@@upfront.versioning-start-new-version</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">object/@@upfront.versioning-can-checkin|nothing</property>
+      name="available_expr">object/@@upfront.versioning-can-start-new-version|nothing</property>
    <property name="permissions">
     <element value="View"/>
    </property>
@@ -101,29 +52,13 @@
 
  <object name="document_actions" meta_type="CMF Action Category">
   <property name="title"></property>
-  <object name="derive_copy" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Derive copy</property>
+  <object name="commit" meta_type="CMF Action" i18n:domain="upfront.versioning">
+   <property name="title" i18n:translate="">Commit</property>
    <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-derive-copy</property>
+   <property name="url_expr">string:$object_url/@@upfront.versioning-commit</property>
    <property name="icon_expr"></property>
    <property
-      name="available_expr">object/@@upfront.versioning-can-derive-copy|nothing</property>
-   <property name="permissions">
-    <element value="View"/>
-   </property>
-   <property name="visible">True</property>
-  </object>
- </object>
-
- <object name="document_actions" meta_type="CMF Action Category">
-  <property name="title"></property>
-  <object name="add_to_repository" meta_type="CMF Action" i18n:domain="upfront.versioning">
-   <property name="title" i18n:translate="">Add to repository</property>
-   <property name="description" i18n:translate=""></property>
-   <property name="url_expr">string:$object_url/@@upfront.versioning-add-to-repository</property>
-   <property name="icon_expr"></property>
-   <property
-      name="available_expr">object/@@upfront.versioning-can-add-to-repository|nothing</property>
+      name="available_expr">object/@@upfront.versioning-can-commit|nothing</property>
    <property name="permissions">
     <element value="View"/>
    </property>

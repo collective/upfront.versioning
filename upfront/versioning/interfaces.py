@@ -4,46 +4,28 @@ from zope.annotation.interfaces import IAnnotations
 
 class IVersioner(Interface):
     """Interface for utility which provides versioning methods"""
-
-    def getWorkspace(context):
-        """If the authenticated member does not have a workspace then create 
-        one. Return the workspace.
-        
-        A context is needed to be able to find the membership tool."""
-
-    def can_derive_copy(item):
-        """Return true if item and none of its parents provide ICheckedOut, 
-        false otherwise."""         
-
-    def can_add_to_repository(item):
-        """Return true if (1) item and none of its parents provide either 
-        ICheckedOut or ICheckedIn and (2) IAddToRepositoryPrecondition utility 
-        returns true, false otherwise."""
          
-    def can_checkout(item):
-        """Return true if ICheckedIn interface is provided by item and 
-        ICheckedOut not by any parent, false otherwise."""
+    def can_start_new_version(item):
+        """Return true if ICheckedOut is not provided by item or any ancestor, 
+        false otherwise."""
 
-    def can_checkin(item):
+    def can_commit(item):
         """Return true if (1) ICheckedOut interface is provided by item and not 
         by any parent, false otherwise."""
 
-    def derive_copy(item):
-        """Copy item to authenticated member's workspace. Return copied 
+    def start_new_version(item):
+        """Create a new version of item. 
+        
+        If item is not yet versioned then it becomes the first version. The
+        second version is created and returned.
+
+        If the item is already versioned then a new version is created and 
+        returned.
+        """
+
+    def commit(item):
+        """Make item the current item, ie. the one returned by searches. Return 
         item."""
-
-    def checkout(item):
-        """Checkout item to authenticated member's workspace. Returns
-        checked out item."""
-
-    def checkin(item):
-        """Checkin item from authenticated member's workspace to 
-        repository. Return checked in item."""
-
-class IAddToRepositoryPrecondition(Interface):
-    """Interface for utility which evaluates whether an item may be added to
-    the repository. Third-party products should implement this for custom 
-    behaviour."""
 
 class ICheckedOut(Interface):
     """Marker interface applied to an object on checkout"""
@@ -55,7 +37,13 @@ class IVersionMetadata(IAnnotations):
     """Interface for adapter which manages version metadata on an object """
 
     def initialize(item):
-        """Set values obtained from item"""
+        """Copy token metadata from item if it is present to preserve chain, 
+        else fetch token from item. 
+        
+        If version metadata is present on item then increment that version as 
+        the version, else set it to one.
+        
+        All other attributes are fetched from item."""
 
     def edit(**kwargs):
         """Update values from kwargs"""
@@ -83,12 +71,6 @@ class IVersionMetadata(IAnnotations):
 
 class IVersioningEvent(IObjectEvent):
     """Base class for versioning events"""
-
-class IBeforeObjectDeriveEvent(IVersioningEvent):
-    pass
-
-class IAfterObjectDeriveEvent(IVersioningEvent):
-    original = Attribute(u"The object that was originally cloned to create the copy")
 
 class IBeforeObjectCheckoutEvent(IVersioningEvent):
     pass

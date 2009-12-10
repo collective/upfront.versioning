@@ -2,21 +2,11 @@ from zope.interface import implements
 from zope.component.interfaces import ObjectEvent
 
 from interfaces import IVersioningEvent, IBeforeObjectCheckoutEvent, \
-    IAfterObjectCheckoutEvent, IBeforeObjectDeriveEvent, IAfterObjectDeriveEvent, \
-    IBeforeObjectCheckinEvent, IAfterObjectCheckinEvent
+    IAfterObjectCheckoutEvent, IBeforeObjectCheckinEvent, \
+    IAfterObjectCheckinEvent
 
 class VersioningEvent(ObjectEvent):
     implements(IVersioningEvent)
-
-class BeforeObjectDeriveEvent(VersioningEvent):
-    implements(IBeforeObjectDeriveEvent)
-
-class AfterObjectDeriveEvent(VersioningEvent):
-    implements(IAfterObjectDeriveEvent)
-
-    def __init__(self, object, original):
-        VersioningEvent.__init__(self, object)
-        self.original = original
 
 class BeforeObjectCheckoutEvent(VersioningEvent):
     implements(IBeforeObjectCheckoutEvent)

@@ -42,25 +42,6 @@ class VersioningTestCase(ptc.PloneTestCase):
         
         utility = getUtility(IVersioner)
 
-        # Create items in site root as admin
-        self.loginAsPortalOwner()
-        for portal_type, id, transition in (
-            ('Document', 'root-private', None),
-            ('Document', 'root-published', 'publish'),
-            ('Document', 'repo-admin', 'publish',),
-            ):
-            ob = _createObjectByType(portal_type, self.portal, id)
-            fti = self.portal.portal_types.getTypeInfo(portal_type)
-            fti._finishConstruction(ob)
-            if transition is not None:
-                self.portal.portal_workflow.doActionFor(ob, transition)
-       
-        # We need to commit here so that _p_jar isn't None and move will work
-        transaction.savepoint(optimistic=True)
-
-        # Add items to repo while logged in as admin
-        utility.add_to_repository(self.portal['repo-admin'])
-
         # Add a site member
         uf = self.portal.acl_users
         uf._doAddUser('member', 'secret', ['Member'], [])
@@ -68,35 +49,52 @@ class VersioningTestCase(ptc.PloneTestCase):
         # Login as the member
         self.login('member')
         _createHomeFolder(self.portal, 'member', take_ownership=0)
-        workspace = utility.getWorkspace(self.portal)
 
-        # Create documents in workspace as member
+        workspace = self.getWorkspace()
+
+        # Create items in workspace as member
         created = []
-        for portal_type, id in (
-            ('Document', 'repo-member'),            
-            ('Folder', 'folder-containing-item'),
-            ('DDocument', 'repo-ddocument'),
+        versioned = []
+        for portal_type, id, version in (
+            ('Document', 'a-document', 1),
+            ('Folder', 'folder-containing-item', 1),
+            ('DDocument', 'a-ddocument', 1),
+            ('Document', 'a-document-unversioned', 0),
+            ('Folder', 'folder-containing-item-unversioned', 0),
+            ('DDocument', 'a-ddocument-unversioned', 0),
             ):
             ob = _createObjectByType(portal_type, workspace, id)
             fti = self.portal.portal_types.getTypeInfo(portal_type)
             fti._finishConstruction(ob)
             created.append(ob)
+            if version:
+                versioned.append(ob)
 
-         # Create sub-item
+        # Create sub-items
         ob = _createObjectByType('Document', workspace['folder-containing-item'], 'contained')
         fti = self.portal.portal_types.getTypeInfo('Document')
         fti._finishConstruction(ob)
         created.append(ob)
 
-        # Portal owner must publish the item before it can be added to the repo
+        ob = _createObjectByType('Document', workspace['folder-containing-item-unversioned'], 'contained')
+        fti = self.portal.portal_types.getTypeInfo('Document')
+        fti._finishConstruction(ob)
+        created.append(ob)
+
+        # Portal owner must publish the items
         self.loginAsPortalOwner()
         for ob in created:
-            self.portal.portal_workflow.doActionFor(ob, transition)
+            self.portal.portal_workflow.doActionFor(ob, 'publish')
 
         transaction.savepoint(optimistic=True)
 
-        # Add top-level items to repo while logged in as member
+        # Subject some items to versioning. The member still has 
+        # Modify Portal Content permission thanks to 
+        # simple_publication_workflow.
         self.login('member')
-        for ob in created:
-            if ob.aq_parent == workspace:
-                utility.add_to_repository(ob)
+        for ob in versioned:
+            utility.start_new_version(ob)
+
+
+    def getWorkspace(self):
+        return self.portal.portal_membership.getAuthenticatedMember().getHomeFolder()
