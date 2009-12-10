@@ -3,9 +3,11 @@ from zope.component import getUtility
 
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
-from plone.app.contentmenu.menu import WorkflowMenu as BaseWorkflowMenu
+from plone.app.contentmenu.menu import WorkflowSubMenuItem \
+    as BaseWorkflowSubMenuItem
+from plone.memoize.instance import memoize
 
-from upfront.versioning.interfaces import IVersioner, ICheckedOut
+from upfront.versioning.interfaces import IVersioner, ICheckedOut, ICheckedIn
 from upfront.versioning import _
 
 class VersioningView(BrowserView):
@@ -38,11 +40,21 @@ class VersioningView(BrowserView):
         )
         self.request.response.redirect(obj.absolute_url())            
 
-class WorkflowMenu(BaseWorkflowMenu):
-    """Override to return an empty workflow menu for items that are
-    checked out."""
+class WorkflowSubMenuItem(BaseWorkflowSubMenuItem):
+    """Override availability of workflow menu item."""
 
-    def getMenuItems(self, context, request):
-        if ICheckedOut.providedBy(context):
+    @memoize
+    def available(self):
+        """If ICheckedOut is provided by context then return empty list. 
+        If ICheckedIn is provided and context is not the latest version 
+        return empty list, else default."""
+        if ICheckedOut.providedBy(self.context):
             return []
-        return BaseWorkflowMenu.getMenuItems(self, context, request)    
+
+        if ICheckedIn.providedBy(self.context):
+            vc = getToolByName(self.context, 'upfront_versioning_catalog')
+            ob = vc.getLatestVersionOf(self.context)
+            if ob != self.context:
+                return []
+
+        return BaseWorkflowSubMenuItem.available(self)

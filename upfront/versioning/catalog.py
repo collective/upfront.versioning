@@ -24,6 +24,7 @@ class VersioningCatalog(CatalogTool):
                 ('token', 'FieldIndex', None),         
                 ('state', 'FieldIndex', None),
                 ('path', 'ExtendedPathIndex', ZCExtra(doc_attr='getPhysicalPath')),
+                ('version', 'FieldIndex', None),
             ):
             if not name in self.indexes():
                 self.manage_addIndex(name, type, extra=extra)
@@ -54,5 +55,18 @@ class VersioningCatalog(CatalogTool):
 
     def getHighestVersionNumberOf(self, obj):
         """Return highest version number of object identified by token"""
-        versions = [b.version for b in self(token=IVersionMetadata(obj).token)] + [0]
-        return max(versions)
+        brains = self(token=IVersionMetadata(obj).token, sort_on='version')
+        if brains:
+            return brains[-1].version
+        return 0
+
+    def getLatestVersionOf(self, obj):
+        """Return latest version of object identified by token"""
+        brains = self(
+            token=IVersionMetadata(obj).token, 
+            sort_on='version',
+            state='checked_in'
+        )
+        if brains:
+            return brains[-1].getObject()
+        return None            

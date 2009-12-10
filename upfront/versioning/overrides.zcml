@@ -5,10 +5,9 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="upfront.versioning">
 
-    <browser:menu
-        id="plone_contentmenu_workflow"
-        title="The 'workflow' menu - allows the user to execute workflow transitions"
-        class=".browser.views.WorkflowMenu"
-        /> 
+    <adapter for="* *"
+        name="plone.contentmenu.workflow"
+        factory=".browser.views.WorkflowSubMenuItem"
+        provides="plone.app.contentmenu.interfaces.IContentMenuItem" />
 
 </configure>
