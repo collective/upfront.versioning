@@ -1,3 +1,4 @@
 3. Action icons
 6. Version Folder needs an icon
-7. Fix versioning for types that have global allow false.
+7. allowedRolesAndUsers not indexed for children, ie. reindex recursively 
+on start new version and commit
