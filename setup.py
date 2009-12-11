@@ -27,6 +27,7 @@ setup(name='upfront.versioning',
           'setuptools',
           # -*- Extra requirements: -*-
           'Plone',
+          'plone.indexer',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
