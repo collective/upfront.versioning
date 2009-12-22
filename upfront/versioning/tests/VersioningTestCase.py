@@ -66,6 +66,10 @@ class VersioningTestCase(ptc.PloneTestCase):
             ob = _createObjectByType(portal_type, workspace, id)
             fti = self.portal.portal_types.getTypeInfo(portal_type)
             fti._finishConstruction(ob)
+            if portal_type == 'DDocument':
+                ob.setRelated(self.portal.news)
+            if portal_type == 'Document':
+                ob.setRelatedItems([self.portal.news])
             created.append(ob)
             if version:
                 versioned.append(ob)

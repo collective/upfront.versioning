@@ -175,10 +175,27 @@ class TestStartNewVersion(VersioningTestCase):
         utility = getUtility(IVersioner)
         workspace = self.getWorkspace()
 
-        original = workspace['a-ddocument']['00000001']
-        copy = workspace['a-ddocument']['00000002']
+        # keepReferencesOnCopy is set for DDocument.related so Archetypes
+        # handles the reference preservation.
+        original = workspace['a-ddocument-unversioned']
+        original_related = original.getRelated()
 
-        self.assertEquals(copy.getRelated(), original.getRelated())
+        version2 = utility.start_new_version(original)
+        version1 = version2.aq_parent['00000001']
+
+        self.assertEquals(original_related, version1.getRelated())
+        self.assertEquals(original_related, version2.getRelated())
+
+        # keepReferencesOnCopy is not set for Document.relatedItems so we
+        # handle the reference preservation.
+        original = workspace['a-document-unversioned']
+        original_related = original.getRelatedItems()
+
+        version2 = utility.start_new_version(original)
+        version1 = version2.aq_parent['00000001']
+
+        self.assertEquals(original_related, version1.getRelatedItems())
+        self.assertEquals(original_related, version2.getRelatedItems())
 
 def test_suite():
     from unittest import TestSuite, makeSuite
