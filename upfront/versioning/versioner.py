@@ -109,10 +109,16 @@ class Versioner(object):
         # If not version then item is not yet subject to versioning
         if not adapted.version: 
 
-            # Rename item
+            # Rename item. Use deeper API to avoid permission problems.
             original_id = item.id
             newid = '%s-%s' % (item.id, randint(1,1000000))
-            item.setId(newid)
+            parent = item.aq_parent
+            item._notifyOfCopyTo(parent, op=1)
+            parent._delObject(item.id, suppress_events=False)
+            item = aq_base(item)
+            item._setId(newid)
+            parent._setObject(newid, item, set_owner=0, suppress_events=False)
+            item = parent._getOb(newid)
 
             # Create a VersionFolder with same id as item's original id
             folder = _createObjectByType(
