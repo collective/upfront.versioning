@@ -4,7 +4,8 @@ from zope.interface import implements
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.Archetypes.atapi import *
 
-from interfaces import IVersionFolder, IVersionMetadata
+from interfaces import IVersionFolder
+from upfront.versioning.interfaces import IVersionMetadata
 
 schema = Schema((
 ),
