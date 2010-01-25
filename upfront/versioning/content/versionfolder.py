@@ -4,7 +4,7 @@ from zope.interface import implements
 from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
 from Products.Archetypes.atapi import *
 
-from interfaces import IVersionFolder
+from interfaces import IVersionFolder, IVersionMetadata
 
 schema = Schema((
 ),
@@ -22,5 +22,14 @@ class VersionFolder(BaseFolder, BrowserDefaultMixin):
     _at_rename_after_creation = True
 
     schema = VersionFolder_schema
-        
+
+    def getLatestVersion(self):
+        """ Return the latest version
+        """ 
+        versions = [IVersionMetadata(obj) for obj in self.objectValues()]
+        versions.sort(lambda a,b: cmp(a.version, b.version))
+        return version[-1]
+
+
+
 registerType(VersionFolder, 'upfront.versioning')
