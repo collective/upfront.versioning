@@ -29,7 +29,7 @@ class VersionFolder(BaseFolder, BrowserDefaultMixin):
         """ 
         versions = [IVersionMetadata(obj) for obj in self.objectValues()]
         versions.sort(lambda a,b: cmp(a.version, b.version))
-        return version[-1]
+        return versions[-1]
 
 
 
