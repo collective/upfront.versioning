@@ -161,33 +161,11 @@ class Versioner(object):
         item.aq_parent._setObject(copy.id, copy, set_owner=1, suppress_events=False)
         copy = item.aq_parent._getOb(copy.id)
 
-        # Remove workflow history
-        unwrapped = aq_base(copy)
-        if hasattr(unwrapped, 'workflow_history'):
-            delattr(unwrapped, 'workflow_history')
-
-        # The copy will be in its initial review state. Change it to be 
-        # the same as the item which it was copied from.
+        # Put copy and children initial state. We may want to make this 
+        # configurable?
         for dontcare, child in [(copy.id, copy)] + copy.ZopeFind(copy, search_sub=1):
-            wf = getToolByName(item, 'portal_workflow')
-            wfs = {}
-            for wf_id in wf.getChainFor(child):
-                item_review_state = wf.getInfoFor(item, 'review_state', wf_id=wf_id)
-                child_review_state = wf.getInfoFor(child, 'review_state', wf_id=wf_id)
-                if child_review_state != item_review_state:            
-                    status = {
-                        'action': None, 
-                        'review_state': item_review_state, 
-                        'actor': None, 
-                        'comments': '', 
-                        'time': DateTime()
-                    }
-                    wf.setStatusOf(wf_id, child, status)
-                    wfs[wf_id] = wf.getWorkflowById(wf_id)
+            child.notifyWorkflowCreated()
 
-            if wfs:
-                wf._recursiveUpdateRoleMappings(child, wfs)
-            
         # Toggle marker interfaces
         if ICheckedIn.providedBy(copy):
             noLongerProvides(copy, ICheckedIn)
