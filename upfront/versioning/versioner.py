@@ -106,8 +106,9 @@ class Versioner(object):
         notify(BeforeObjectCheckoutEvent(item))
 
         adapted = IVersionMetadata(item)
-        # If not version then item is not yet subject to versioning
-        if not adapted.version: 
+        # If ICheckedIn is not provided then item is not yet subject to 
+        # versioning.
+        if not ICheckedIn.providedBy(item):
 
             # Rename item. Use deeper API to avoid permission problems.
             original_id = item.id
