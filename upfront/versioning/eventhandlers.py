@@ -61,25 +61,32 @@ def onATObjectMovedEvent(ob, event):
     """Objects need to be recatalogued or removed when moves and 
     deletes occur"""
 
-    if event.oldParent and event.newParent and event.oldName and event.newName:
-        # A move took place. Catalog only if object is already in the catalog.
+    # Did a move take place?
+    if (event.oldParent is not None) and (event.newParent is not None) \
+        and event.oldName and event.newName:
+
         vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)
         if vc is not None:
-            pth = '/'.join(event.oldParent.getPhysicalPath()) \
-                + '/' +event.oldName
-            if vc.isCatalogued(pth):
-                vc.uncatalog_object(pth)
-                vc.catalog_object(
-                    ob, 
-                    '/'.join(ob.getPhysicalPath()),
-                    skip_interface_check=True
-                )
-        
-    elif event.oldParent and event.oldName:
-        # A delete took place
+
+            # Uncatalog everything under the object being renamed
+            if ob == event.object:
+                pth = '/'.join(event.oldParent.getPhysicalPath()) + '/' + event.oldName
+                for brain in vc.unrestrictedSearchResults(path=pth):
+                    vc.uncatalog_object(brain.getPath())
+
+            # Catalog objects affected by rename. Method catalog_object 
+            # will not index objects not subjected to versioning, so we 
+            # don't have to check anything here.
+            vc.catalog_object(ob, '/'.join(ob.getPhysicalPath()))
+
+    # Did a delete take place?
+    elif (event.oldParent is not None) and event.oldName:
+
         vc = getToolByName(event.oldParent, 'upfront_versioning_catalog', None)
         if vc is not None:
-            pth = '/'.join(event.oldParent.getPhysicalPath()) \
-                + '/' +event.oldName
-            if vc.isCatalogued(pth):
-                vc.uncatalog_object(pth)
+
+            # Uncatalog everything under the object being renamed
+            if ob == event.object:
+                pth = '/'.join(event.oldParent.getPhysicalPath()) + '/' + event.oldName
+                for brain in vc.unrestrictedSearchResults(path=pth):
+                    vc.uncatalog_object(brain.getPath())
