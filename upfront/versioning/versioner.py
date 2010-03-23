@@ -75,7 +75,6 @@ class Versioner(object):
 
     @requireModifyPortalContent
     @check_types
-    @check_children
     def can_start_new_version(self, item):
         parent = item
         while parent is not None:
@@ -99,6 +98,7 @@ class Versioner(object):
         return True
 
     @requireModifyPortalContentRaises
+    @check_children
     def start_new_version(self, item):
         if not self.can_start_new_version(item):
             raise RuntimeError, "Cannot start new version for %s" % item.absolute_url()
