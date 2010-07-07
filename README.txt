@@ -5,7 +5,7 @@ old versions as first-class objects. Old versions cannot be found with the
 portal_catalog and, crucially, cannot be referenced by other objects.
 
 upfront.versioning solves this problem. There is no central repository - 
-versions are by default siblings of a version aware container. 
+versions are by default children of a version aware container. 
 
 Operation 
 ========= 
