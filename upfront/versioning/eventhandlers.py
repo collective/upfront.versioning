@@ -19,6 +19,12 @@ def _removeDiscussion(item):
         # discussion
         tool._createDiscussionFor(item)
 
+    # make sure nothing is left uncataloged
+    pc = getToolByName(item, 'portal_catalog')
+    for brain in pc(path='/'.join(item.getPhysicalPath()),
+                    portal_type='Discussion Item'):
+        pc.uncatalog_object(brain.getPath())
+
 def afterATObjectCheckoutEvent(ob, event):   
     # Fix references. Fields that have keepReferencesOnCopy set do not 
     # need to be fixed.
