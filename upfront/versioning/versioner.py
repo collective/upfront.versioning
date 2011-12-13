@@ -230,6 +230,7 @@ class VersionMetadata(AttributeAnnotations):
         self[ANNOT_KEY].update(
             dict(
                 token=IVersionMetadata(item).token or item.UID(),
+                parent = item.UID(),
                 date=DateTime(),
                 version=version,
                 base_version=IVersionMetadata(item).version,
@@ -249,6 +250,14 @@ class VersionMetadata(AttributeAnnotations):
         if self.has_key(ANNOT_KEY):
             return self[ANNOT_KEY].get('token', None)
         return self.context.UID()
+
+    @property
+    def parent(self):
+        if self.has_key(ANNOT_KEY):
+            uid = self[ANNOT_KEY].get('parent', None)
+            rc = getToolByName(self.context, 'reference_catalog')
+            return rc.lookupObject(uid)
+        return None
 
     @property
     def state(self):
